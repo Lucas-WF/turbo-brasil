@@ -4,90 +4,95 @@ import entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 
-public class GamePanel extends JPanel implements Runnable{
-    final int orginalTitleSize = 16; // titulo fica com o tamanho 16 x 16
-    final int scale = 3;
+public class GamePanel extends JPanel implements Runnable {
+    private static final int FPS = 60;
+    private static final double TIME_PER_TICK = 1e9 / FPS; // Nanoseconds per frame
 
-    public final int titleSize =  orginalTitleSize * scale;  // define o tamanho real do titulo
-    final int maxScreenColumn = 16;
-    final int maxScreenRow = 12;
-    final int screenWidth = titleSize * maxScreenColumn;
-    final int screenHeight = titleSize * maxScreenRow;
+    private final int width, height;
+    private final String title;
+    private Display display;
 
-    int FPS = 60;
+    private Thread thread;
+    private boolean running = false;
 
-    KeyHandler keyH = new KeyHandler();
-    Thread gameThread;  // chama automaticamente a função run ao inicial o game
-    Player player = new Player(this, keyH);
+    private BufferStrategy bs;
+    private Graphics2D graphics;
+    private KeyHandler keyHandler;
 
-    //set player's default position
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
+    private Player player;
 
-    public GamePanel() {
-        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.black);
-        this.setDoubleBuffered(true);
-        this.addKeyListener(keyH);
-        this.setFocusable(true);
+    public GamePanel(int width, int height, String title) {
+        this.width = width;
+        this.height = height;
+        this.title = title;
     }
 
-    public void startGameThread() {
+    private void init() {
+        keyHandler = new KeyHandler();
+        display = new Display(width, height, title);
+        display.getFrame().addKeyListener(keyHandler); // Attach KeyListener to frame
+        player = new Player(keyHandler);
+    }
 
-        gameThread = new Thread(this);
-        gameThread.start();  // cai chamar a funcao run
+    private void tick() {
+        player.update();
+    }
+
+    private void render() {
+        if (bs == null) {
+            display.canvas.createBufferStrategy(3);
+            bs = display.canvas.getBufferStrategy();
+            return;
+        }
+
+        graphics = (Graphics2D) bs.getDrawGraphics();
+        try {
+            graphics.clearRect(0, 0, width, height);
+            player.draw(graphics);
+        } finally {
+            graphics.dispose();
+        }
+        bs.show();
     }
 
     @Override
     public void run() {
+        init();
 
-        while(gameThread != null) {
+        long lastTime = System.nanoTime();
+        double delta = 0;
 
-            double drawInterval = 1_000_000_000/FPS;  // 0.01666 seconds
-            double nextDrawTime = System.nanoTime() + drawInterval;
+        while (running) {
+            long now = System.nanoTime();
+            delta += (now - lastTime) / TIME_PER_TICK;
+            lastTime = now;
 
-
-            // 1) Update:   update information such as character position
-            update();
-
-            //2) Draw: draw on the screen with the updates data
-            repaint();
-
-
-            try {
-
-                double remaningTime = nextDrawTime - System.nanoTime();
-                remaningTime = remaningTime/1_000_000;
-
-                if(remaningTime < 0) {
-                    remaningTime = 0;
-                }
-
-                Thread.sleep((long) remaningTime);
-
-                nextDrawTime += drawInterval;
+            if (delta >= 1) {
+                tick();
+                render();
+                delta--;
             }
-            catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
         }
+
+        stop();
     }
 
-    public void update() {
-        player.update();
+    public synchronized void start() {
+        if (running) return;
+        running = true;
+        thread = new Thread(this);
+        thread.start();
     }
 
-    public void paintComponent(Graphics g) {
-
-            super.paintComponent(g);
-
-            Graphics2D g2 = (Graphics2D) g;
-
-            player.draw(g2);
-
-            g2.dispose();
+    public synchronized void stop() {
+        if (!running) return;
+        running = false;
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

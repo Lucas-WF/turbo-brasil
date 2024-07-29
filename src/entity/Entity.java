@@ -6,6 +6,5 @@ public class Entity {
     public int x, y;
     public int speed;
 
-    public BufferedImage none, left, right;
-    public String direction;
+    public BufferedImage none;
 }
