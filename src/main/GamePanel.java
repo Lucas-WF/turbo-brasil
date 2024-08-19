@@ -23,6 +23,41 @@ public class GamePanel extends JPanel implements Runnable {
 
     private Player player;
 
+    // Teste para a troca de telas
+    private static int gameState = 0;
+    private final int titleState = 0;
+
+    private final int gameMode = 1;
+
+    public static void setGameState(int gameState) {
+        GamePanel.gameState = gameState;
+    }
+
+    public static int getGameState() {
+        return gameState;
+    }
+
+    public int getGameMode() {
+        return gameMode;
+    }
+
+    public int getTitleState() {
+        return titleState;
+    }
+
+    private Ui ui;
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+/// ---
+
     public GamePanel(int width, int height, String title) {
         this.width = width;
         this.height = height;
@@ -30,10 +65,11 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void init() {
-        keyHandler = new KeyHandler();
+        keyHandler = new KeyHandler(this);
         display = new Display(width, height, title);
         display.getFrame().addKeyListener(keyHandler); // Attach KeyListener to frame
         player = new Player(keyHandler);
+        ui = new Ui(keyHandler);
     }
 
     private void tick() {
@@ -50,7 +86,12 @@ public class GamePanel extends JPanel implements Runnable {
         graphics = (Graphics2D) bs.getDrawGraphics();
         try {
             graphics.clearRect(0, 0, width, height);
-            player.draw(graphics);
+
+            if (gameState == titleState) {
+                ui.drawMenu(graphics, this);  // Desenha o menu principal
+            } else if (gameState == gameMode) {
+                ui.drawChooseGameMode(graphics, this);  // Desenha a tela de escolha do modo de jogo
+            }
         } finally {
             graphics.dispose();
         }

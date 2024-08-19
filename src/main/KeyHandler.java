@@ -5,7 +5,15 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
-    public boolean leftPressed, rightPressed;
+    private GamePanel gp;
+
+    public boolean leftPressed;
+
+    public KeyHandler(GamePanel gp) {
+        this.gp = gp;
+    }
+
+    public boolean rightPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -13,7 +21,6 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-
         if (code == KeyEvent.VK_A) {
             leftPressed = true;
         }
@@ -21,6 +28,13 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_D) {
             rightPressed = true;
         }
+        if(gp.getGameState() == gp.getTitleState()) {
+            System.out.println(code == KeyEvent.VK_J);
+            if(code == KeyEvent.VK_J) {
+                gp.setGameState(1);
+            }
+        }
+
     }
 
     @Override
