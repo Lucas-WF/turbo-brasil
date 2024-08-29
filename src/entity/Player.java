@@ -15,11 +15,11 @@ public class Player extends Entity {
 
     public Player(KeyHandler keyHandler) {
         this.keyHandler = keyHandler;
-        this.x = 0;
-        this.speed = 5; // Set the movement speed
+        this.x = 750;
+        this.speed = 15; // Set the movement speed
 
         try {
-            this.image = ImageIO.read(new FileInputStream("res/fusca/fuscaSplashArt.png"));
+            this.image = ImageIO.read(new FileInputStream("res/fusca/monke.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -33,9 +33,15 @@ public class Player extends Entity {
         if (keyHandler.rightPressed) {
             x += speed;
         }
+
     }
 
     public void draw(Graphics2D g2) {
-        g2.drawImage(image, x, 0, 120, 120, null);
+        g2.drawImage(image, x, 570, 240, 240, null);
     }
+
+    public int getSpeed() {
+        return speed;
+    }
+
 }
