@@ -6,6 +6,10 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
+import javax.imageio.ImageIO; // Adicionado import
 
 public class GamePanel extends JPanel implements Runnable {
     private static final int FPS = 60;
@@ -20,7 +24,6 @@ public class GamePanel extends JPanel implements Runnable {
     private KeyHandler keyHandler;
     private Player player;
 
-
     private List<Line> lines = new ArrayList<>();
     private int roadW = 768;
     private int segL = 768;
@@ -29,7 +32,10 @@ public class GamePanel extends JPanel implements Runnable {
     private int playerX = 0;
     private int pos = 0;
     private long downPressStartTime = -1;
-
+    private int totalLaps = 3;
+    private int completedLaps = 1;
+    private boolean gameFinished = false;
+    private BufferedImage finishImage;
 
     public GamePanel(int width, int height, String title) {
         this.width = width;
@@ -38,11 +44,20 @@ public class GamePanel extends JPanel implements Runnable {
         initRoad();
     }
 
+    private void loadFinishImage() {
+        try {
+            finishImage = ImageIO.read(new FileInputStream("res/finish_screen.png")); // Substitua pelo caminho da sua imagem
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void init() {
         keyHandler = new KeyHandler();
         display = new Display(width, height, title);
-        display.getFrame().addKeyListener(keyHandler); // Attach KeyListener to frame
+        display.getFrame().addKeyListener(keyHandler);
         player = new Player(keyHandler);
+        loadFinishImage();
     }
 
     private void initRoad() {
@@ -68,9 +83,21 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void tick() {
+        if (gameFinished) return;
+
         player.update();
 
-        pos += 200;
+        pos += 1600;
+
+        if (pos >= segL * N) {
+            pos = 0;
+            completedLaps++;
+
+            if (completedLaps > totalLaps) {
+                completedLaps = totalLaps;
+                gameFinished = true;
+            }
+        }
 
         if (keyHandler.downPressed) {
             if (downPressStartTime == -1) {
@@ -80,6 +107,9 @@ public class GamePanel extends JPanel implements Runnable {
 
             if (pressedDuration >= 3000) {
                 pos -= Math.min(200, (pressedDuration - 3000) / 15);
+                if (pos < 0) {
+                    pos = segL * (N - 1);
+                }
             }
         } else {
             downPressStartTime = -1;
@@ -95,13 +125,26 @@ public class GamePanel extends JPanel implements Runnable {
 
         graphics = (Graphics2D) bs.getDrawGraphics();
         try {
-            graphics.clearRect(0, 0, width, height);
-            drawRoad(graphics);
-            player.draw(graphics);
+            if (gameFinished) {
+                showFinishScreen(graphics);
+            } else {
+                graphics.clearRect(0, 0, width, height);
+                drawRoad(graphics);
+                player.draw(graphics);
+
+                graphics.setColor(Color.WHITE);
+                graphics.setFont(new Font("Arial", Font.BOLD, 24));
+                String lapText = completedLaps + " / " + totalLaps;
+                graphics.drawString(lapText, width - 100, 30); // Ajuste a posição conforme necessário
+            }
         } finally {
             graphics.dispose();
         }
         bs.show();
+    }
+
+    private void showFinishScreen(Graphics2D g) {
+        g.drawImage(finishImage, 0, 0, width, height, null);
     }
 
     private void drawRoad(Graphics2D g) {
