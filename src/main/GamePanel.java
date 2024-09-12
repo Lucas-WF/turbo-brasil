@@ -5,8 +5,11 @@ import entity.Player;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 
-public class GamePanel extends JPanel implements Runnable {
+
+public class GamePanel extends JPanel implements Runnable{
     private static final int FPS = 60;
     private static final double TIME_PER_TICK = 1e9 / FPS; // Nanoseconds per frame
 
@@ -57,16 +60,31 @@ public class GamePanel extends JPanel implements Runnable {
         return height;
     }
 /// ---
-
+///
     public GamePanel(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
+        display = new Display(width, height, title);
+        display.canvas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();
+                System.out.println("Mouse Position: " + mouseX + ", " + mouseY);
+
+                if (ui.isStartButtonClicked(mouseX, mouseY) && gameState == 0) {
+                    System.out.println("Botão Start clicado! Indo para a seleção de modo de jogo.");
+                    gameState = gameState + 1;
+                }
+
+
+            }
+        });
     }
 
     private void init() {
         keyHandler = new KeyHandler(this);
-        display = new Display(width, height, title);
         display.getFrame().addKeyListener(keyHandler); // Attach KeyListener to frame
         player = new Player(keyHandler);
         ui = new Ui(keyHandler);
@@ -87,10 +105,16 @@ public class GamePanel extends JPanel implements Runnable {
         try {
             graphics.clearRect(0, 0, width, height);
 
-            if (gameState == titleState) {
-                ui.drawMenu(graphics, this);  // Desenha o menu principal
-            } else if (gameState == gameMode) {
-                ui.drawChooseGameMode(graphics, this);  // Desenha a tela de escolha do modo de jogo
+            switch (gameState){
+                case 0:
+                    ui.drawMenu(graphics, this); // Tela Inicial
+                    break;
+                case 1:
+                    ui.drawChooseGameMode(graphics, this);  // Escolha do modo de jogo
+                    break;
+                default:
+                    ui.drawMenu(graphics, this);
+                    break;
             }
         } finally {
             graphics.dispose();
@@ -136,4 +160,5 @@ public class GamePanel extends JPanel implements Runnable {
             e.printStackTrace();
         }
     }
+
 }
