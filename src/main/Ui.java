@@ -168,7 +168,7 @@ public class Ui {
         selectButtonX = screenSize.width/2 - selectButton.getWidth()/2;
         selectButtonY = screenSize.height/2 + car1.getHeight()/2;
 
-        g2.drawImage(backgroundImage, 0, 0, gp.getWidth(), gp.getHeight(), null);
+        g2.drawImage(backgroundGif.getImage(), 0, 0, gp.getWidth(), gp.getHeight(), null);
         g2.drawImage(players[currentPlayerIndex],screenSize.width/2 - players[currentPlayerIndex].getWidth()/2,screenSize.height/8 - title3.getHeight()/2,players[currentPlayerIndex].getWidth(),players[currentPlayerIndex].getHeight(), null);
         g2.drawImage(title3, screenSize.width/2 - title3.getWidth()/2, screenSize.height/8, title3.getWidth(), title3.getHeight(), null);
         g2.drawImage(cars[currentCarIndex], carX, carY, car1.getWidth(), car1.getHeight(), null);
@@ -186,7 +186,7 @@ public class Ui {
             m2X = screenSize.width/6 + m1.getWidth();
             m3X = screenSize.width/6 + m1.getWidth()*2;
 
-            g2.drawImage(backgroundImage, 0, 0, gp.getWidth(), gp.getHeight(), null);
+            g2.drawImage(backgroundGif.getImage(), 0, 0, gp.getWidth(), gp.getHeight(), null);
             g2.drawImage(title4, screenSize.width/2 - title4.getWidth()/2, screenSize.height/8, title4.getWidth(), title4.getHeight(), null);
             g2.drawImage(m1,m1X,mH,m1.getWidth(),m1.getHeight(), null);
             g2.drawImage(m2,m2X,mH,m2.getWidth(),m2.getHeight(), null);

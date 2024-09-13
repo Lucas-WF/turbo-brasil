@@ -14,8 +14,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
 import java.io.IOException;
+
 
 
 public class GamePanel extends JPanel implements Runnable{
@@ -42,6 +42,8 @@ public class GamePanel extends JPanel implements Runnable{
     private static int gameMode = 0;
     // 0 -solo
     // 1 - multiplayer
+
+    private Clip currentClip;//musica
 
     public static void setGameState(int gameState) {
         GamePanel.gameState = gameState;
@@ -127,20 +129,23 @@ public class GamePanel extends JPanel implements Runnable{
                         }
                         break;
                     case 3:
-                        switch ( ui.handleMapSelectionClick(mouseX,mouseY)) {
+                        switch (ui.handleMapSelectionClick(mouseX, mouseY)) {
                             case 1:
-                                System.out.println("rio");
-                                //mapa selecionado = rio
+                                System.out.println("Rio");
+                                // Mapa selecionado = Rio
+                                tocarMusicaEmBackground("garotaDeIpanema"); // Toca a música correspondente
                                 gameState = gameState + 1;
                                 break;
                             case 2:
-                                System.out.println("caatinga");
-                                //mapa selecionado = caatinga
+                                System.out.println("Caatinga");
+                                // Mapa selecionado = Caatinga
+                                tocarMusicaEmBackground("asaBranca"); // Toca Asa Branca
                                 gameState = gameState + 1;
                                 break;
                             case 3:
-                                System.out.println("amazonia");
-                                //mapa selecionado = amazonia
+                                System.out.println("Amazonia");
+                                // Mapa selecionado = Amazonia
+                                tocarMusicaEmBackground("hakunaMatata"); // Toca Hakuna Matata
                                 gameState = gameState + 1;
                                 break;
                             default:
@@ -162,7 +167,7 @@ public class GamePanel extends JPanel implements Runnable{
         player = new Player(keyHandler);
         ui = new Ui(keyHandler);
 
-        tocarMusicaEmBackground();
+        tocarMusicaEmBackground("garotaDeIpanema");
     }
 
     private void tick() {
@@ -198,7 +203,7 @@ public class GamePanel extends JPanel implements Runnable{
                     ui.drawSelectMapMode(graphics, this);
                     break;
                 case 4:
-                    //run
+                    // comeca a corrida de acordo com o mapa, carro do p1, carro do p2, e modo de jogo!!
                 default:
                     break;
             }
@@ -247,26 +252,31 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    public void tocarMusicaEmBackground() {
-        // Criar uma nova thread para tocar o som de maneira assíncrona
-        new Thread(() -> {
-            som(); // Método que toca a música
-        }).start();
+    // Método para parar a música atual
+    public void pararMusica() {
+        if (currentClip != null && currentClip.isRunning()) {
+            currentClip.stop();  // Para o som
+            currentClip.close(); // Libera os recursos
+        }
     }
 
-    public static void som() {
-        String file = "res/music.wav"; // pegando o caminho absoluto do som
+    // Método para tocar a nova música, parando a anterior
+    public void tocarMusicaEmBackground(String song) {
+        pararMusica(); // Para a música anterior, se estiver tocando
+        new Thread(() -> som(song)).start();  // Toca a nova música em uma thread
+    }
+
+    // Modifica a função 'som' para usar 'currentClip'
+    public void som(String song) {
+        String file = "res/songs/" + song + ".wav"; // Caminho da música
         File arquivoAudio = new File(file);
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(arquivoAudio);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
+            currentClip = AudioSystem.getClip();  // Atribui o novo Clip à variável 'currentClip'
+            currentClip.open(audioInputStream);
 
-            // Tocar o som continuamente (loop infinito)
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-
-            // A música vai continuar tocando indefinidamente, sem necessidade de Thread.sleep.
-            // Quando quiser parar o som, você pode chamar `clip.stop()` em algum momento.
+            // Toca o som em loop contínuo
+            currentClip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             System.out.println("Erro: " + e.getMessage());
             e.printStackTrace();
