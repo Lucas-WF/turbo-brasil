@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class Segment {
     final private SegmentType type;
     final private ArrayList<Point> points;
+    final public ArrayList<Point> generatedPoints = new ArrayList<>();
 
     public Segment(SegmentType type, ArrayList<Point> points) {
         this.type = type;
@@ -32,9 +33,7 @@ public class Segment {
         return new Point((int) x, (int) y);
     }
 
-    public ArrayList<Point> generatePoints() throws Exception {
-        final ArrayList<Point> generatedPoints = new ArrayList<>();
-
+    public void generatePoints() throws Exception {
         if (type == SegmentType.STRAIGHT && points.size() == 2) {
             Point start = points.get(0);
             Point end = points.get(1);
@@ -62,7 +61,5 @@ public class Segment {
         if (points.size() < 2 || points.size() > 4 || points.size() == 3) {
             throw new Exception("Unimplemented cases");
         }
-
-        return generatedPoints;
     }
 }
