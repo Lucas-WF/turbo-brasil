@@ -1,6 +1,6 @@
-package main;
+package main.engine;
 
-import entity.Player;
+import main.entity.Player;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -52,7 +52,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    private void init() {
+    private void init() throws IOException {
         keyHandler = new KeyHandler();
         display = new Display(width, height, title);
         display.getFrame().addKeyListener(keyHandler);
@@ -186,7 +186,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        init();
+        try {
+            init();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         long lastTime = System.nanoTime();
         double delta = 0;

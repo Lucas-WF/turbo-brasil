@@ -1,13 +1,11 @@
 package main;
 
-import java.awt.*;
+import main.engine.GamePanel;
+import main.utils.Utils;
 
 public class Main {
     public static void main(String[] args) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        System.out.println(screenSize.getWidth() + " " + screenSize.getHeight());
-
-        GamePanel gamePanel = new GamePanel((int) screenSize.getWidth(), (int) screenSize.getHeight(), "Turbo Brasil");
+        GamePanel gamePanel = new GamePanel((int) Utils.SCREEN_WIDTH, (int) Utils.SCREEN_HEIGHT, "Turbo Brasil");
         gamePanel.start();
     }
 }
