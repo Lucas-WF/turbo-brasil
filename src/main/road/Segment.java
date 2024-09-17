@@ -11,6 +11,10 @@ public class Segment {
         this.points = points;
     }
 
+    public SegmentType getType() {
+        return type;
+    }
+
     private Point bezier_curve(double t, Point b0, Point b1) {
         int x = (int) ((1 - t) * b0.getX() + t * b1.getX());
         int y = (int) ((1 - t) * b0.getY() + t * b1.getY());
