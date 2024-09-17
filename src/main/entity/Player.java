@@ -5,6 +5,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Player extends Entity {
     final private KeyHandler keyHandler;
@@ -18,12 +19,22 @@ public class Player extends Entity {
     }
 
     public void update() {
+        if (this.willCollideVertically) {
+            this.speed = 0;
+            this.y -= 5;
+        }
+
+        if (this.willCollideHorizontally) {
+            this.speed = this.speed / 2;
+            this.x -= 5;
+        }
+
         if (keyHandler.leftPressed) {
-            x -= speed;
+            x -= (int) Math.ceil(speed * (Math.sqrt(2)/2));
         }
 
         if (keyHandler.rightPressed) {
-            x += speed;
+            x += (int) Math.ceil(speed * (Math.sqrt(2)/2));
         }
 
         if (keyHandler.downPressed) {
@@ -43,4 +54,25 @@ public class Player extends Entity {
         return speed;
     }
 
+    public void collision (ArrayList<Entity> entities) {
+        float verticalDistance;
+        float horizontalDistance;
+
+        for (Entity entity : entities) {
+            verticalDistance = entity.y + ((float) entity.bufferedImage.getHeight() / 2) -
+                    this.y + ((float) this.bufferedImage.getHeight() / 2);
+            horizontalDistance = entity.x + ((float) entity.bufferedImage.getWidth() / 2) -
+                    this.x + ((float) this.bufferedImage.getWidth() / 2);
+
+            if (isHorizontallyAlignedTo(entity) && isVerticallyAlignedTo(entity)) {
+                if (verticalDistance <= 0) {
+                    this.willCollideVertically = true;
+                }
+
+                if (horizontalDistance <= 0) {
+                    this.willCollideHorizontally = true;
+                }
+            }
+        }
+    }
 }

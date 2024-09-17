@@ -9,7 +9,8 @@ public abstract class Entity {
     public double screenX = Utils.SCREEN_WIDTH / 2;
     public double screenY= Utils.SCREEN_HEIGHT;
     public int speed;
-    public boolean willCollide;
+    public boolean willCollideHorizontally = false;
+    public boolean willCollideVertically = false;
     public BufferedImage bufferedImage;
 
     boolean isHorizontallyAlignedTo(Entity entity) {
