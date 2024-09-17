@@ -34,7 +34,16 @@ public class Segment {
     }
 
     public void generatePoints() throws Exception {
-        if (type == SegmentType.STRAIGHT && points.size() == 2) {
+        generatedPoints.clear();
+        int x1 = points.get(0).getX();
+        int y1 = points.get(0).getY();
+        int x2 = points.get(1).getX();
+        int y2 = points.get(1).getY();
+        int Cx = 0, Cy = 0;
+        int Mdx = (x2 + Cx) / 2;
+        int Mdy = (y2 + Cy) / 2;
+
+        if (type == SegmentType.STRAIGHT) {
             Point start = points.get(0);
             Point end = points.get(1);
 
@@ -45,11 +54,30 @@ public class Segment {
             }
         }
 
-        if (type == SegmentType.CURVE && points.size() == 4) {
+        if (type == SegmentType.RIGHT) {
+            int dxRight = x2 - x1;
+            int dyRight = y2 - y1;
+            Cx = ((x1 + x2) / 2) + dyRight / 2;
+            Cy = ((y1 + y2) / 2) - dxRight / 2;
+
+
             Point b0 = points.get(0);
-            Point b1 = points.get(1);
-            Point b2 = points.get(2);
-            Point b3 = points.get(3);
+            Point b1 = new Point(Cx, Cy);
+            Point b2 = new Point(Mdx, Mdy);
+            Point b3 = points.get(1);
+
+            for (int i = 0; i <= 100; ++i) {
+                double t = i / 100.0;
+                Point p = bezier_curve(t, b0, b1, b2, b3);
+                generatedPoints.add(p);
+            }
+        }
+
+        if (type == SegmentType.LEFT) {
+            Point b0 = points.get(0);
+            Point b1 = new Point(Cx, Cy);
+            Point b2 = new Point(Mdx, Mdy);
+            Point b3 = points.get(1);
 
             for (int i = 0; i <= 100; ++i) {
                 double t = i / 100.0;
