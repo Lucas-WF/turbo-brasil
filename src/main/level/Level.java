@@ -20,7 +20,7 @@ public class Level {
 
     public List<Point> generateMiniMap() {
         List<Segment> segments = road.getSegments();
-        OptionalInt index =  IntStream.range(0, segments.size()).filter(i -> segments.get(i).getType() == SegmentType.CURVE).findFirst();
+        OptionalInt index =  IntStream.range(0, segments.size()).filter(i -> segments.get(i).getType() == SegmentType.RIGHT).findFirst();
 
         if(index.isEmpty()) {
             return segments.stream().flatMap(segment -> segment.generatedPoints.stream()).collect(Collectors.toList());
