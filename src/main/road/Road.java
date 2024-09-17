@@ -5,31 +5,49 @@ import java.util.ArrayList;
 public class Road {
     final private Point b0;
     final private Point bE;
-    final private ArrayList<Segment> segments = new ArrayList<>();
+    private final ArrayList<Segment> segments;
 
-    public Road(Point b0, Point bE) {
+    public Road(Point b0, Point bE, ArrayList<Segment> sE) {
         this.b0 = b0;
         this.bE = bE;
+        this.segments = sE;
     }
 
     public void generateSegments(ArrayList<SegmentType> types) {
-        ArrayList<Point> initPoints = new ArrayList<>();
-        ArrayList<Point> endPoints = new ArrayList<>();
-
-        initPoints.add(b0);
-        initPoints.add(new Point(100, 200)); // RANDOM IMPLEMENT
-
-        endPoints.add(new Point(300, 400)); // RANDOM IMPLEMENT
-        endPoints.add(bE);
-
-        segments.add(new Segment(SegmentType.STRAIGHT, initPoints));
+        Point previousPoint = b0;
+        ArrayList<Point> segmentPoints;
 
         for (SegmentType type : types) {
-            segments.add(new Segment(type, initPoints)); // PLEASE, CHANGE THE initPoints FOR THE REAL ONES
+            segmentPoints = new ArrayList<>();
+            segmentPoints.add(previousPoint);
+
+            Point nextPoint;
+            switch (type) {
+                case STRAIGHT:
+                    nextPoint = new Point(previousPoint.getX() + 100, previousPoint.getY());
+                    break;
+                case LEFT:
+                    nextPoint = new Point(previousPoint.getX() + 100, previousPoint.getY() - 100);
+                    break;
+                case RIGHT:
+                    nextPoint = new Point(previousPoint.getX() + 100, previousPoint.getY() + 100);
+                    break;
+                default:
+                    nextPoint = new Point(previousPoint.getX(), previousPoint.getY());
+                    break;
+            }
+
+            segmentPoints.add(nextPoint);
+            segments.add(new Segment(type, segmentPoints));
+            previousPoint = nextPoint;
         }
 
-        segments.add(new Segment(SegmentType.STRAIGHT, endPoints));
+        ArrayList<Point> finalSegmentPoints = new ArrayList<>();
+        finalSegmentPoints.add(previousPoint);
+        finalSegmentPoints.add(bE);
+        segments.add(new Segment(SegmentType.STRAIGHT, finalSegmentPoints));
     }
+
 
     public ArrayList<Segment> getSegments() {
         return segments;
@@ -38,7 +56,6 @@ public class Road {
     public ArrayList<Point> generateRoadPoints() {
         ArrayList<Point> roadPoints = new ArrayList<>();
         for (Segment segment : segments) {
-            // TODO: CALL THE GENERATE POINTS FUNC
             roadPoints.addAll(segment.generatedPoints);
         }
         return roadPoints;

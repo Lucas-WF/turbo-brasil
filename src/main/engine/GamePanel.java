@@ -87,7 +87,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         player.update();
 
-        pos += 1600;
+        pos += 500;
 
         if (pos >= segL * N) {
             pos = 0;

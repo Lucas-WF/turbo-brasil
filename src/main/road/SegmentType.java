@@ -2,8 +2,8 @@ package main.road;
 
 public enum SegmentType {
     STRAIGHT("straight"),
-    HILL("hill"),
-    CURVE("curve");
+    LEFT("hill"),
+    RIGHT("right");
 
     public String type;
     SegmentType(String type) {
