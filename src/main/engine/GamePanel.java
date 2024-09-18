@@ -37,6 +37,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean gameFinished = false;
     private BufferedImage finishImage;
 
+
     public GamePanel(int width, int height, String title) {
         this.width = width;
         this.height = height;

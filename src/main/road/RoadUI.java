@@ -9,9 +9,13 @@ import java.util.ArrayList;
 
 public class RoadUI {
     private Road road;
+    private int width;
+    private int height;
 
-    public RoadUI(Road road) {
+    public RoadUI(Road road, int width, int height) {
         this.road = road;
+        this.width = width;
+        this.height = height;
     }
 
     public void render(Graphics2D g, int width, int height) {
