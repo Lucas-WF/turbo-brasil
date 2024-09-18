@@ -15,9 +15,6 @@ public class Main {
 
         ArrayList<SegmentType> segmentTypes = new ArrayList<>();
         segmentTypes.add(SegmentType.STRAIGHT);
-        //segmentTypes.add(SegmentType.RIGHT);
-        //segmentTypes.add(SegmentType.STRAIGHT);
-
 
         Road road = new Road(b0, bE, segmentTypes);
 
