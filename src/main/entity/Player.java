@@ -1,6 +1,8 @@
 package main.entity;
 
 import main.engine.KeyHandler;
+import main.utils.Utils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.FileInputStream;
@@ -30,19 +32,19 @@ public class Player extends Entity {
         }
 
         if (keyHandler.leftPressed) {
-            x -= (int) Math.ceil(speed * (Math.sqrt(2)/2));
+            this.x -= (int) Math.ceil(speed * (Math.sqrt(2)/2));
         }
 
         if (keyHandler.rightPressed) {
-            x += (int) Math.ceil(speed * (Math.sqrt(2)/2));
+            this.x += (int) Math.ceil(speed * (Math.sqrt(2)/2));
         }
 
         if (keyHandler.downPressed) {
-            y += speed;
+            this.speed += this.speed == Utils.MAX_SPEED ? 0 : 5;
         }
 
         if (keyHandler.upPressed) {
-            y -= speed;
+            this.speed -= this.speed == 0 ? 0 : 5;
         }
     }
 
