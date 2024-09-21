@@ -1,5 +1,6 @@
 package main;
 
+import main.engine.GamePanel;
 import main.road.Point;
 import main.road.RoadUI;
 import main.road.Road;
@@ -19,5 +20,8 @@ public class Main {
         Road road = new Road(b0, bE, segmentTypes);
 
         RoadUI roadUI = new RoadUI(road, (int) Utils.SCREEN_WIDTH, (int) Utils.SCREEN_HEIGHT);
+
+        GamePanel gamePanel = new GamePanel((int) Utils.SCREEN_WIDTH, (int) Utils.SCREEN_HEIGHT, "Turbo Brasil");
+        gamePanel.start();
     }
 }
