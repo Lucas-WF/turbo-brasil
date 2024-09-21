@@ -1,23 +1,30 @@
 package main;
 
-import main.road.Point;
-import main.road.RoadUI;
-import main.road.Road;
-import main.road.SegmentType;
+import main.engine.GamePanel;
 import main.utils.Utils;
 
-import java.util.ArrayList;
+import javax.swing.JFrame;
 
 public class Main {
     public static void main(String[] args) {
-        Point b0 = new Point(0, 0);
-        Point bE = new Point(200, 0);
+        // Definindo largura, altura e título da janela do jogo
+        int width = (int) Utils.SCREEN_WIDTH;
+        int height = (int) Utils.SCREEN_HEIGHT;
+        String title = "Pseudo 3D Racing Game";
 
-        ArrayList<SegmentType> segmentTypes = new ArrayList<>();
-        segmentTypes.add(SegmentType.STRAIGHT);
+        // Criando o GamePanel
+        GamePanel gamePanel = new GamePanel(width, height, title);
 
-        Road road = new Road(b0, bE, segmentTypes);
+        // Configurando a janela principal (JFrame)
+        JFrame frame = new JFrame(title);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.add(gamePanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null); // Centraliza a janela
+        frame.setVisible(true);
 
-        RoadUI roadUI = new RoadUI(road, (int) Utils.SCREEN_WIDTH, (int) Utils.SCREEN_HEIGHT);
+        // Iniciar o jogo
+        gamePanel.start();
     }
 }

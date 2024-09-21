@@ -1,83 +1,84 @@
 package main.road;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Road {
-    private final Point b0;
-    private final Point bE;
-    private ArrayList<Segment> segments;
+    private List<Line> lines = new ArrayList<>();
+    private final int roadWidth;
+    private final int segmentLength;
+    private final int numSegments;
+    private final double camD; //CamDepth
 
-    private final ArrayList<SegmentType> sTypes;
-
-    public Road(Point b0, Point bE, ArrayList<SegmentType> sE) {
-        this.b0 = b0;
-        this.bE = bE;
-        this.sTypes = sE;
-        this.segments = new ArrayList<>();
+    public Road(int roadWidth, int segmentLength, int numSegments, double camD) {
+        this.roadWidth = roadWidth;
+        this.segmentLength = segmentLength;
+        this.numSegments = numSegments;
+        this.camD = camD;
+        generateRoad();
     }
 
-    public void generateSegments(ArrayList<SegmentType> types) {
-        Point previousPoint = b0;
-        ArrayList<Point> segmentPoints;
-
-        for (SegmentType type : types) {
-            segmentPoints = new ArrayList<>();
-            segmentPoints.add(previousPoint);
-
-            Point nextPoint;
-            switch (type) {
-                case STRAIGHT:
-                    nextPoint = new Point(previousPoint.getX() + 100, previousPoint.getY());
-                    break;
-                case LEFT:
-                    nextPoint = new Point(previousPoint.getX() + 100, previousPoint.getY() - 100);
-                    break;
-                case RIGHT:
-                    nextPoint = new Point(previousPoint.getX() + 100, previousPoint.getY() + 100);
-                    break;
-                default:
-                    nextPoint = new Point(previousPoint.getX(), previousPoint.getY());
-                    break;
+    private void generateRoad() {
+        for (int i = 0; i < numSegments; i++) {
+            Line line = new Line();
+            line.setZ( i * segmentLength);
+            if (i > 200 && i < 700) {
+                line.setCurve(4);
             }
-
-            segmentPoints.add(nextPoint);
-            Segment segment = new Segment(type, segmentPoints);
-            try {
-                segment.generatePoints();
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (i > 1000) {
+                line.setY(Math.sin(Math.toRadians(i / 30)) * 1500);
+                if (line.getY() < 0) {
+                    line.setY(0);
+                }
             }
-
-            segments.add(segment);
-            previousPoint = nextPoint;
-        }
-        if (!previousPoint.equals(bE)) {
-            ArrayList<Point> finalSegmentPoints = new ArrayList<>();
-            finalSegmentPoints.add(previousPoint);
-            finalSegmentPoints.add(bE);
-
-            Segment finalSegment = new Segment(SegmentType.STRAIGHT, finalSegmentPoints);
-            try {
-                finalSegment.generatePoints();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            segments.add(finalSegment);
+            lines.add(line);
         }
     }
 
-
-
-    public ArrayList<Segment> getSegments() {
-        return segments;
+    public List<Line> getLines() {
+        return lines;
     }
 
-    public ArrayList<Point> generateRoadPoints() {
-        generateSegments(sTypes);
-        ArrayList<Point> roadPoints = new ArrayList<>();
-        for (Segment segment : segments) {
-            roadPoints.addAll(segment.generatedPoints);
+    public void renderRoad(Graphics2D g, int width, int height, int camX, int camY, int pos, int playerX) {
+        int startPos = pos / segmentLength;
+        double x = 0, dx = 0;
+        double maxY = height;
+        camY = 1500 + (int) lines.get(startPos).getWorldY();
+        for (int n = startPos; n < startPos + 300; n++) {
+            Line currentLine = lines.get(n % numSegments);  // Pega o segmento atual
+            Line previousLine = (n == 0) ? currentLine : lines.get((n - 1) % numSegments);  // Pega o segmento anterior
+
+            currentLine.project(camX - (int) x, camY, pos, camD, roadWidth, width, height);
+            x += dx;
+            dx += currentLine.getCurve();
+
+            if (currentLine.getY() > 0 && currentLine.getY() < maxY) {
+                maxY = currentLine.getY();
+
+                Color grass = ((n / 2) % 2) == 0 ? new Color(16, 200, 16) : new Color(0, 154, 0);
+                Color rumble = ((n / 2) % 2) == 0 ? new Color(255, 255, 255) : new Color(255, 0, 0);
+                Color road = Color.black;
+                Color midline = ((n / 2) % 2) == 0 ? new Color(255, 255, 255) : new Color(0, 0, 0);
+
+                drawQuad(g, grass, 0, (int) previousLine.getY(), width, 0, (int) currentLine.getY(), width);
+                drawQuad(g, rumble, (int) previousLine.getX(), (int) previousLine.getY(), (int) (previousLine.getW() * 1.5), (int) currentLine.getX(), (int) currentLine.getY(), (int) (currentLine.getW() * 1.5));
+                drawQuad(g, road, (int) previousLine.getX(), (int) previousLine.getY(), (int) (previousLine.getW() * 1.4), (int) currentLine.getX(), (int) currentLine.getY(), (int) (currentLine.getW() * 1.4));
+                drawQuad(g, midline, (int) previousLine.getX(), (int) previousLine.getY(), (int) (previousLine.getW() * 0.8), (int) currentLine.getX(), (int) currentLine.getY(), (int) (currentLine.getW() * 0.8));
+                drawQuad(g, road, (int) previousLine.getX(), (int) previousLine.getY(), (int) (previousLine.getW() * 0.7), (int) currentLine.getX(), (int) currentLine.getY(), (int) (currentLine.getW() * 0.7));
+            }
         }
-        return roadPoints;
+    }
+
+
+    private void drawQuad(Graphics g, Color c, int x1, int y1, int w1, int x2, int y2, int w2) {
+        int[] xPoints = { x1 - w1, x2 - w2, x2 + w2, x1 + w1 };
+        int[] yPoints = { y1, y2, y2, y1 };
+        g.setColor(c);
+        g.fillPolygon(xPoints, yPoints, 4);
+    }
+
+    public int getSegmentLength() {
+        return segmentLength;
     }
 }
