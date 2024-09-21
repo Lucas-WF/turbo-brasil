@@ -12,8 +12,13 @@ public class Enemy extends Entity {
     public Enemy() throws IOException {
         this.x = 750;
         this.y = 0;
+        this.pos = 0;
         this.speed = 0;
         this.bufferedImage = ImageIO.read(new FileInputStream("res/fusca/monke.png"));
+    }
+
+    public void start() {
+        this.speed = 5;
     }
 
     public void update() {
@@ -25,7 +30,11 @@ public class Enemy extends Entity {
         if (this.willCollideHorizontally) {
             this.x -= Utils.AVOID_STEP;
             this.speed /= 2;
+            return;
         }
+
+        this.speed += this.speed == Utils.MAX_SPEED ? 0 : 5;
+        this.pos += speed;
     }
 
     public void draw(Graphics2D g2) {

@@ -1,6 +1,9 @@
 package main.level;
 
+import main.road.Point;
 import main.road.Road;
+import main.road.Segment;
+import main.road.SegmentType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Level {
-/*    final private Road road;
+    final private Road road;
 
     public Level(Road road) {
         this.road = road;
@@ -51,5 +54,5 @@ public class Level {
         }
 
         return pointList;
-    } */
+    }
 }
