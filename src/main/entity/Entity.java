@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 
 public abstract class Entity {
     public int x, y;
+    public int pos;
     public double screenX = Utils.SCREEN_WIDTH / 2;
     public double screenY= Utils.SCREEN_HEIGHT;
     public int speed;

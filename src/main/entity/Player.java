@@ -16,6 +16,7 @@ public class Player extends Entity {
         this.keyHandler = keyHandler;
         this.x = 750;
         this.y = 0;
+        this.pos = 0;
         this.speed = 0;
         this.bufferedImage = ImageIO.read(new FileInputStream("res/fusca/monke.png"));
     }
@@ -39,11 +40,12 @@ public class Player extends Entity {
             this.x += (int) Math.ceil(speed * (Math.sqrt(2)/2));
         }
 
-        if (keyHandler.downPressed) {
+        if (keyHandler.upPressed) {
             this.speed += this.speed == Utils.MAX_SPEED ? 0 : 5;
+            this.pos += speed;
         }
 
-        if (keyHandler.upPressed) {
+        if (keyHandler.downPressed) {
             this.speed -= this.speed == 0 ? 0 : 5;
         }
     }
