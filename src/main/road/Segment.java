@@ -51,7 +51,7 @@ public class Segment {
             Point start = points.get(0);
             Point end = points.get(1);
 
-            for (int i = 0; i <= 100; ++i) {
+            for (int i = 1; i <= 100; ++i) {
                 double t = i / 100.0;
                 Point p = bezier_curve(t, start, end);
                 generatedPoints.add(p);
@@ -70,7 +70,7 @@ public class Segment {
             Point b2 = new Point(Mdx, Mdy);
             Point b3 = points.get(1);
 
-            for (int i = 0; i <= 100; ++i) {
+            for (int i = 1; i <= 100; ++i) {
                 double t = i / 100.0;
                 Point p = bezier_curve(t, b0, b1, b2, b3);
                 generatedPoints.add(p);
@@ -83,15 +83,11 @@ public class Segment {
             Point b2 = new Point(Mdx, Mdy);
             Point b3 = points.get(1);
 
-            for (int i = 0; i <= 100; ++i) {
+            for (int i = 1; i <= 100; ++i) {
                 double t = i / 100.0;
                 Point p = bezier_curve(t, b0, b1, b2, b3);
                 generatedPoints.add(p);
             }
-        }
-
-        if (points.size() < 2 || points.size() > 4 || points.size() == 3) {
-            throw new Exception("Unimplemented cases");
         }
     }
 }
