@@ -13,5 +13,5 @@ public class Utils {
 
     public static int AVOID_STEP = 5;
 
-    public static int MAX_SPEED = 50;
+    public static int MAX_SPEED = 500;
 }

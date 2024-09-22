@@ -1,80 +1,188 @@
 package main.engine;
 
+import main.entity.Player;
+import main.road.GameRace;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.io.IOException;
-import main.entity.Player;
-import main.road.Road;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
+import java.io.File;
 
-public class GamePanel extends JPanel implements Runnable {
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
+
+
+
+public class GamePanel extends JPanel implements Runnable{
     private static final int FPS = 60;
     private static final double TIME_PER_TICK = 1e9 / FPS; // Nanoseconds per frame
+
     private final int width, height;
     private final String title;
     private Display display;
+
     private Thread thread;
     private boolean running = false;
+
     private BufferStrategy bs;
     private Graphics2D graphics;
     private KeyHandler keyHandler;
+
     private Player player;
+    private GameRace gameRace;
 
-    private Road road;
-    private int playerX = 0;
-    private int pos = 0;
-    private long downPressStartTime = -1;
-    private int totalLaps = 3;
-    private int completedLaps = 1;
-    private boolean gameFinished = false;
 
+    // Teste para a troca de telas
+    private static int gameState = 0;
+    private final int titleState = 0;
+
+    private static int gameMode = 0;
+    // 0 -solo
+    // 1 - multiplayer
+
+    private Clip currentClip;//musica
+
+    public static void setGameState(int gameState) {
+        GamePanel.gameState = gameState;
+    }
+
+    public static int getGameState() {
+        return gameState;
+    }
+
+    public int getGameMode() {
+        return gameMode;
+    }
+
+    public int getTitleState() {
+        return titleState;
+    }
+
+    private Ui ui;
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+    /// ---
+    ///
     public GamePanel(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
-        road = new Road(768, 768, 1600, 0.84); // Criação da estrada
+        display = new Display(width, height, title);
+        display.canvas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();
+                System.out.println("Mouse Position: " + mouseX + ", " + mouseY);
+
+                switch (gameState) {
+                    case 0:// acoes no inicio
+                        if (ui.isStartButtonClicked(mouseX, mouseY)) {
+                            System.out.println("Botão Start clicado! Indo para a seleção de modo de jogo.");
+                            gameState = gameState + 1;
+                        }
+                        break;
+                    case 1:// acoes no menu
+                        if (ui.isSoloButtonClicked(mouseX, mouseY)) {
+                            System.out.println("Botão Solo clicado! Indo para a seleção de modo de jogo.");
+                            gameState = gameState + 1;
+                        }
+                        if(ui.isMultiplayerButtonClicked(mouseX, mouseY)) {
+                            System.out.println("multiplayer");
+                            gameState = gameState + 1;
+                            gameMode += 1;
+                        }
+                        if(ui.isExitButtonClicked(mouseX, mouseY)) {
+                            System.out.println("sair");
+                            gameState = 0;
+                        }
+                        break;
+                    case 2: // acoes em selecionar carro
+                        ui.handleCarSelectionClick(mouseX, mouseY);
+                        if(ui.isSelectButtonClicked(mouseX, mouseY)) {
+                            if(gameMode == 0){
+                                //setar carro o player 1;
+                                System.out.println("start");
+                                gameState = gameState + 1;
+                            }else{
+                                if(ui.getPlayerIndex() == 0) {
+                                    ui.handleCarSelectionClick(mouseX, mouseY);
+                                    ui.confirmPlayerSelection();
+                                    //setar carro o player 1;
+                                }else{
+                                    System.out.println("start");
+                                    //setar carro do player 2
+                                    gameState = gameState + 1;
+                                }
+                            }
+                        }
+                        break;
+                    case 3:
+                        switch (ui.handleMapSelectionClick(mouseX, mouseY)) {
+                            case 1:
+                                System.out.println("Rio");
+                                // Mapa selecionado = Rio
+                                tocarMusicaEmBackground("garotaDeIpanema"); // Toca a música correspondente
+                                gameState = gameState + 1;
+                                break;
+                            case 2:
+                                System.out.println("Caatinga");
+                                // Mapa selecionado = Caatinga
+                                tocarMusicaEmBackground("asaBranca"); // Toca Asa Branca
+                                gameState = gameState + 1;
+                                break;
+                            case 3:
+                                System.out.println("Amazonia");
+                                // Mapa selecionado = Amazonia
+                                tocarMusicaEmBackground("hakunaMatata"); // Toca Hakuna Matata
+                                gameState = gameState + 1;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+
+            }
+        });
     }
 
     private void init() throws IOException {
         keyHandler = new KeyHandler();
-        display = new Display(width, height, title);
         display.getFrame().addKeyListener(keyHandler);
+        display.getFrame().requestFocusInWindow();
         player = new Player(keyHandler);
+        ui = new Ui(keyHandler);
+        gameRace = new GameRace(width, height, title, player); // Inicializa o GameRace
+        gameRace.init(); // Inicializa o GameRace
+        tocarMusicaEmBackground("garotaDeIpanema");
     }
 
-    public void tick() {
-        if (gameFinished) return;
-
+    private void tick() {
+        if (gameState == 4) { // Verifica se está na corrida
+            gameRace.update(); // Atualiza a lógica do GameRace
+        }
         player.update();
-        pos += 500;
-
-        if (pos >= road.getLines().size() * 768) {
-            pos = 0;
-            completedLaps++;
-            if (completedLaps > totalLaps) {
-                completedLaps = totalLaps;
-                gameFinished = true;
-            }
-        }
-
-        if (keyHandler.downPressed) {
-            if (downPressStartTime == -1) {
-                downPressStartTime = System.currentTimeMillis();
-            }
-            long pressedDuration = System.currentTimeMillis() - downPressStartTime;
-
-            if (pressedDuration >= 3000) {
-                pos -= Math.min(200, (pressedDuration - 3000) / 15);
-                if (pos < 0) {
-                    pos = road.getLines().size() * 768 - 1;
-                }
-            }
-        } else {
-            downPressStartTime = -1;
-        }
     }
 
-    public void render() {
+    private void render() {
         if (bs == null) {
             display.canvas.createBufferStrategy(3);
             bs = display.canvas.getBufferStrategy();
@@ -83,36 +191,37 @@ public class GamePanel extends JPanel implements Runnable {
 
         graphics = (Graphics2D) bs.getDrawGraphics();
         try {
-            if (gameFinished) {
-                showFinishScreen(graphics);
-            } else {
-                graphics.clearRect(0, 0, width, height);
-                int camY = 1500;
-                road.renderRoad(graphics, width, height, playerX, camY, pos, playerX);
+            graphics.clearRect(0, 0, width, height);
 
-                // Renderiza o jogador
-                player.draw(graphics);
+            switch (gameState){
+                case 0:
+                    ui.drawMenu(graphics, this); // Tela Inicial
+                    break;
+                case 1:
+                    ui.drawChooseGameMode(graphics, this);  // Escolha do modo de jogo
+                    break;
+                case 2:
+                    if(gameMode == 0){
+                        ui.drawSoloMode(graphics, this);
+                    }else {
+                        ui.drawMultiplayerMode(graphics, this);
+                    }
+                    break;
+                case 3:
+                    ui.drawSelectMapMode(graphics, this);
+                    break;
+                case 4:
+                    gameRace.render(graphics);
+                    display.getFrame().requestFocusInWindow();
+                    break;
 
-                // Renderiza o texto de voltas
-                graphics.setColor(Color.WHITE);
-                graphics.setFont(new Font("Arial", Font.BOLD, 24));
-                String lapText = completedLaps + " / " + totalLaps;
-                graphics.drawString(lapText, width - 100, 30);  // Ajusta a posição do texto conforme necessário
+                default:
+                    break;
             }
         } finally {
             graphics.dispose();
         }
         bs.show();
-    }
-
-
-
-    private void showFinishScreen(Graphics2D g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, width, height);
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 48));
-        g.drawString("Game Finished!", width / 2 - 150, height / 2);
     }
 
     @Override
@@ -156,5 +265,39 @@ public class GamePanel extends JPanel implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    // Metodo para parar a música atual
+    public void pararMusica() {
+        if (currentClip != null && currentClip.isRunning()) {
+            currentClip.stop();  // Para o som
+            currentClip.close(); // Libera os recursos
+        }
+    }
+
+    // Metodo para tocar a nova música, parando a anterior
+    public void tocarMusicaEmBackground(String song) {
+        pararMusica(); // Para a música anterior, se estiver tocando
+        new Thread(() -> som(song)).start();  // Toca a nova música em uma thread
+    }
+
+    // Modifica a função 'som' para usar 'currentClip'
+    public void som(String song) {
+        String file = "res/songs/" + song + ".wav"; // Caminho da música
+        File arquivoAudio = new File(file);
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(arquivoAudio);
+            currentClip = AudioSystem.getClip();  // Atribui o novo Clip à variável 'currentClip'
+            currentClip.open(audioInputStream);
+
+            // Toca o som em loop contínuo
+            currentClip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            System.out.println("Erro: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public Display getDisplay() {
+        return display;
     }
 }

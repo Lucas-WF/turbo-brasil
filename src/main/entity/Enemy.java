@@ -41,7 +41,7 @@ public class Enemy extends Entity {
         //g2.drawImage(bufferedImage, x, 570, 240, 240, null);
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 

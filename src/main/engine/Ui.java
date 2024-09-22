@@ -1,4 +1,5 @@
-package main;
+package main.engine;
+
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -179,18 +180,18 @@ public class Ui {
     }
 
     public void drawSelectMapMode(Graphics2D g2, GamePanel gp) {
-            this.g2 = g2;
+        this.g2 = g2;
 
-            mH = screenSize.height/8 + title4.getHeight() + 20;
-            m1X = screenSize.width/6;
-            m2X = screenSize.width/6 + m1.getWidth();
-            m3X = screenSize.width/6 + m1.getWidth()*2;
+        mH = screenSize.height/8 + title4.getHeight() + 20;
+        m1X = screenSize.width/6;
+        m2X = screenSize.width/6 + m1.getWidth();
+        m3X = screenSize.width/6 + m1.getWidth()*2;
 
-            g2.drawImage(backgroundGif.getImage(), 0, 0, gp.getWidth(), gp.getHeight(), null);
-            g2.drawImage(title4, screenSize.width/2 - title4.getWidth()/2, screenSize.height/8, title4.getWidth(), title4.getHeight(), null);
-            g2.drawImage(m1,m1X,mH,m1.getWidth(),m1.getHeight(), null);
-            g2.drawImage(m2,m2X,mH,m2.getWidth(),m2.getHeight(), null);
-            g2.drawImage(m3,m3X,mH,m2.getWidth(),m2.getHeight(), null);
+        g2.drawImage(backgroundGif.getImage(), 0, 0, gp.getWidth(), gp.getHeight(), null);
+        g2.drawImage(title4, screenSize.width/2 - title4.getWidth()/2, screenSize.height/8, title4.getWidth(), title4.getHeight(), null);
+        g2.drawImage(m1,m1X,mH,m1.getWidth(),m1.getHeight(), null);
+        g2.drawImage(m2,m2X,mH,m2.getWidth(),m2.getHeight(), null);
+        g2.drawImage(m3,m3X,mH,m2.getWidth(),m2.getHeight(), null);
     }
 
     public boolean isButtonClicked(int mouseX, int mouseY, int buttonX, int buttonY, int buttonWidth, int buttonHeight) {

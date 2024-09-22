@@ -14,14 +14,15 @@ public class Player extends Entity {
 
     public Player(KeyHandler keyHandler) throws IOException {
         this.keyHandler = keyHandler;
-        this.x = 750;
+        this.x = 650;
         this.y = 0;
         this.pos = 0;
         this.speed = 0;
-        this.bufferedImage = ImageIO.read(new FileInputStream("res/fusca/monke.png"));
+        this.bufferedImage = ImageIO.read(new FileInputStream("res/fusca/fuscaSplashArt.png"));
     }
 
     public void update() {
+
         if (this.willCollideVertically) {
             this.speed = 0;
             this.y -= 5;
@@ -32,33 +33,39 @@ public class Player extends Entity {
             this.x -= 5;
         }
 
+        if (keyHandler.upPressed) {
+            if (this.speed < Utils.MAX_SPEED) {
+                this.speed += (speed == 0) ? 1 : speed * 0.02;
+            }
+        } else {
+            if (this.speed > 20) {
+                this.speed -= speed * 1/100;
+            } else {
+                this.speed -= 5;
+            }
+        }
+
         if (keyHandler.leftPressed) {
-            this.x -= (int) Math.ceil(speed * (Math.sqrt(2)/2));
+            this.x -= (int) Math.ceil(speed * (Math.sqrt(2) / 40));
         }
 
         if (keyHandler.rightPressed) {
-            this.x += (int) Math.ceil(speed * (Math.sqrt(2)/2));
+            this.x += (int) Math.ceil(speed * (Math.sqrt(2) / 40));
         }
-
-        if (keyHandler.upPressed) {
-            this.speed += this.speed == Utils.MAX_SPEED ? 0 : 5;
-            this.pos += speed;
-        }
-
-        if (keyHandler.downPressed) {
-            this.speed -= this.speed == 0 ? 0 : 5;
+        if (this.speed < 0) {
+            this.speed = 0;
         }
     }
 
     public void draw(Graphics2D g2) {
-        //g2.drawImage(bufferedImage, x, 570, 240, 240, null);
+        g2.drawImage(bufferedImage, x, 570, 240, 240, null);
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
-    public void collision (ArrayList<Entity> entities) {
+    public void collision(ArrayList<Entity> entities) {
         float verticalDistance;
         float horizontalDistance;
 

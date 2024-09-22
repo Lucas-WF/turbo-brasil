@@ -9,7 +9,7 @@ public abstract class Entity {
     public int pos;
     public double screenX = Utils.SCREEN_WIDTH / 2;
     public double screenY= Utils.SCREEN_HEIGHT;
-    public int speed;
+    public double speed;
     public boolean willCollideHorizontally = false;
     public boolean willCollideVertically = false;
     public BufferedImage bufferedImage;
