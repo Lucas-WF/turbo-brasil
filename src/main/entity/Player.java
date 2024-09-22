@@ -5,6 +5,7 @@ import main.utils.Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ public class Player extends Entity {
         this.y = 0;
         this.pos = 0;
         this.speed = 0;
-        this.bufferedImage = ImageIO.read(new FileInputStream("res/fusca/fuscaSplashArt.png"));
     }
 
     public void update() {

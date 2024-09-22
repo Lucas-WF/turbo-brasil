@@ -115,7 +115,9 @@ public class GamePanel extends JPanel implements Runnable{
                         ui.handleCarSelectionClick(mouseX, mouseY);
                         if(ui.isSelectButtonClicked(mouseX, mouseY)) {
                             if(gameMode == 0){
+                                player.setBufferedImage(Ui.getCarSelected());
                                 //setar carro o player 1;
+
                                 System.out.println("start");
                                 gameState = gameState + 1;
                             }else{

@@ -2,7 +2,10 @@ package main.entity;
 
 import main.utils.Utils;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public abstract class Entity {
     public int x, y;
@@ -10,6 +13,11 @@ public abstract class Entity {
     public double screenX = Utils.SCREEN_WIDTH / 2;
     public double screenY= Utils.SCREEN_HEIGHT;
     public double speed;
+
+    public void setBufferedImage(BufferedImage typeOfCar) {
+        this.bufferedImage = typeOfCar;
+    }
+
     public boolean willCollideHorizontally = false;
     public boolean willCollideVertically = false;
     public BufferedImage bufferedImage;

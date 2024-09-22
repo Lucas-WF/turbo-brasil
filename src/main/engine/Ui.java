@@ -22,6 +22,8 @@ public class Ui {
     private int currentCarIndex = 0; // Índice para o carro atual
     private BufferedImage[] cars;
 
+    static private BufferedImage carSelected;
+
     private int currentPlayerIndex = 0;
     private BufferedImage p1,p2;
     private BufferedImage[] players;
@@ -81,6 +83,7 @@ public class Ui {
             p2 = ImageIO.read(new FileInputStream("res/titles/p2.png"));
 
             cars = new BufferedImage[] {car1, car2, car3, car4, car5};
+
             players = new BufferedImage[] {p1, p2};
 
             //maps selection
@@ -96,6 +99,10 @@ public class Ui {
             throw new RuntimeException("Erro ao carregar imagem dos botões", e);
         }
 
+    }
+
+    static public BufferedImage getCarSelected() {
+        return carSelected;
     }
 
     public void drawMenu(Graphics2D g2, GamePanel gp) {
@@ -219,6 +226,8 @@ public class Ui {
         return isButtonClicked(mouseX, mouseY, rightButtonX, rightButtonY, rightButton.getWidth(), rightButton.getHeight());
     }
     public boolean isSelectButtonClicked(int mouseX, int mouseY) {
+        carSelected = cars[currentCarIndex];
+        System.out.println(carSelected);
         return isButtonClicked(mouseX, mouseY, selectButtonX, selectButtonY, selectButton.getWidth(), selectButton.getHeight());
     }
 
