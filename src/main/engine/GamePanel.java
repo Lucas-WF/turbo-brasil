@@ -46,6 +46,8 @@ public class GamePanel extends JPanel implements Runnable{
     // 0 -solo
     // 1 - multiplayer
 
+    private static String mapSelected;
+
     private Clip currentClip;//musica
 
     public static void setGameState(int gameState) {
@@ -140,18 +142,21 @@ public class GamePanel extends JPanel implements Runnable{
                                 // Mapa selecionado = Rio
                                 tocarMusicaEmBackground("garotaDeIpanema"); // Toca a música correspondente
                                 gameState = gameState + 1;
+                                mapSelected = "Rio";
                                 break;
                             case 2:
                                 System.out.println("Caatinga");
                                 // Mapa selecionado = Caatinga
                                 tocarMusicaEmBackground("asaBranca"); // Toca Asa Branca
                                 gameState = gameState + 1;
+                                mapSelected = "Caatinga";
                                 break;
                             case 3:
                                 System.out.println("Amazonia");
                                 // Mapa selecionado = Amazonia
                                 tocarMusicaEmBackground("hakunaMatata"); // Toca Hakuna Matata
                                 gameState = gameState + 1;
+                                mapSelected = "Amazonia";
                                 break;
                             default:
                                 break;
@@ -164,6 +169,10 @@ public class GamePanel extends JPanel implements Runnable{
 
             }
         });
+    }
+
+    public static String getMapSelected() {
+        return mapSelected;
     }
 
     private void init() throws IOException {
