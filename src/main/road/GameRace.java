@@ -3,8 +3,10 @@
     import main.entity.Player;
     import main.engine.KeyHandler;
 
+    import javax.imageio.ImageIO;
     import javax.swing.*;
     import java.awt.*;
+    import java.io.FileInputStream;
     import java.io.IOException;
 
     public class GameRace {
@@ -68,6 +70,7 @@
             if (gameFinished) {
                 showFinishScreen(graphics);
             } else {
+
                 graphics.clearRect(0, 0, width, height);
                 int camY = 1500;
                 road.renderRoad(graphics, width, height, playerX, camY, pos, playerX);
@@ -84,6 +87,8 @@
                     String countdownText = String.valueOf(countdown);
                     graphics.drawString(countdownText, width / 2 - 20,height / 4);
                 }
+
+
             }
         }
 

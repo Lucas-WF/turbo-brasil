@@ -13,6 +13,8 @@ import java.util.ArrayList;
 public class Player extends Entity {
     final private KeyHandler keyHandler;
 
+    private int carImageTurnBack= 0,carImageTurnRight = 0, carImageTurnLeft = 0;
+
     public Player(KeyHandler keyHandler) throws IOException {
         this.keyHandler = keyHandler;
         this.x = 650;
@@ -22,7 +24,19 @@ public class Player extends Entity {
     }
 
     public void update() {
+        try {
+            if((carImageTurnBack % 12) == 0 && speed > 0) {
+                super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Costas1.png")));
+            }else {
+                super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Costas2.png")));
 
+            }
+
+            carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (this.willCollideVertically) {
             this.speed = 0;
             this.y -= 5;
@@ -46,11 +60,30 @@ public class Player extends Entity {
         }
 
         if (keyHandler.leftPressed) {
-            this.x -= (int) Math.ceil(speed * (Math.sqrt(2) / 40));
+            this.x -= (int) Math.ceil(speed * (Math.sqrt(2) / 100));
+
+            try {
+                super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Direita.png")));
+
+                carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         }
 
         if (keyHandler.rightPressed) {
-            this.x += (int) Math.ceil(speed * (Math.sqrt(2) / 40));
+            this.x += (int) Math.ceil(speed * (Math.sqrt(2) / 100));
+
+
+            try {
+                super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Esquerda.png")));
+                carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         if (this.speed < 0) {
             this.speed = 0;

@@ -1,8 +1,12 @@
 package main.road;
 
 import main.engine.GamePanel;
+import main.engine.KeyHandler;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +18,7 @@ public class Road {
     private final double camD; //CamDepth
 
     Color grass, rumble, road, midline;
+
 
     public Road(int roadWidth, int segmentLength, int numSegments, double camD) {
         this.roadWidth = roadWidth;
@@ -59,7 +64,7 @@ public class Road {
 
             if (currentLine.getY() > 0 && currentLine.getY() < maxY) {
                 maxY = currentLine.getY();
-                System.out.println(GamePanel.getMapSelected());
+                //System.out.println(GamePanel.getMapSelected());
                 switch(GamePanel.getMapSelected()) {
                     case "Rio":
                         grass = ((n / 2) % 2) == 0 ? new Color(60, 120, 220) : new Color(90, 139, 227);

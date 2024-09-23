@@ -72,7 +72,7 @@ public class Ui {
             selectButton = ImageIO.read(new FileInputStream("res/buttons/selectButton.png"));
 
             //cars placeholder
-            car1 = ImageIO.read(new FileInputStream("res/cars/car1.png"));
+            car1 = ImageIO.read(new FileInputStream("res/gameCars/Amarelo1Costas1.png"));
             car2 = ImageIO.read(new FileInputStream("res/cars/car2.png"));
             car3 = ImageIO.read(new FileInputStream("res/cars/car3.png"));
             car4 = ImageIO.read(new FileInputStream("res/cars/car4.png"));
