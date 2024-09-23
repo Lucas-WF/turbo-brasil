@@ -113,16 +113,12 @@ public class Ui {
         soloButtonX = screenSize.width/2 + startButton.getWidth()/6 + 6;
         soloButtonY = 280 + title2.getHeight();
 
-        multiplayerButtonX = screenSize.width/2 + multiplayerButton.getWidth()/6;
-        multiplayerButtonY = 280 + title2.getHeight() + soloButton.getHeight();
-
         exitButtonX = screenSize.width/2 + exitButton.getWidth()/6;
-        exitButtonY = 280 + title2.getHeight() + soloButton.getHeight() + multiplayerButton.getHeight();
+        exitButtonY = 280 + title2.getHeight() + soloButton.getHeight();
 
         g2.drawImage(backgroundGif.getImage(), 0, 0, gp.getWidth(), gp.getHeight(), null);
         g2.drawImage(title2, screenSize.width/2 + 10, 260, title2.getWidth(), title2.getHeight(), null);
         g2.drawImage(soloButton, soloButtonX,soloButtonY, soloButton.getWidth(), soloButton.getHeight(), null);
-        g2.drawImage(multiplayerButton,multiplayerButtonX,multiplayerButtonY, multiplayerButton.getWidth(), multiplayerButton.getHeight(), null);
         g2.drawImage(exitButton, exitButtonX, exitButtonY, exitButton.getWidth(), exitButton.getHeight(), null);
     }
 
@@ -182,9 +178,9 @@ public class Ui {
             this.g2 = g2;
 
             mH = screenSize.height/8 + title4.getHeight() + 20;
-            m1X = screenSize.width/6;
-            m2X = screenSize.width/6 + m1.getWidth();
-            m3X = screenSize.width/6 + m1.getWidth()*2;
+            m1X = screenSize.width/8;
+            m2X = screenSize.width/8 + m1.getWidth();
+            m3X = screenSize.width/8 + m1.getWidth()*2;
 
             g2.drawImage(backgroundGif.getImage(), 0, 0, gp.getWidth(), gp.getHeight(), null);
             g2.drawImage(title4, screenSize.width/2 - title4.getWidth()/2, screenSize.height/8, title4.getWidth(), title4.getHeight(), null);
