@@ -7,6 +7,7 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.random.RandomGenerator;
 
 public class Enemy extends Entity {
     private static final int carW = 240;
@@ -19,11 +20,9 @@ public class Enemy extends Entity {
         this.bufferedImage = ImageIO.read(new FileInputStream("res/gameCars/Amarelo1Costas1.png"));
     }
 
-    public void start() {
-        this.speed = 5;
-    }
-
     public void update() {
+        this.speed += RandomGenerator.getDefault().nextInt(0, 5);
+
         synchronized (this) {
             if (this.willCollideVertically) {
                 this.y -= Utils.AVOID_STEP;
