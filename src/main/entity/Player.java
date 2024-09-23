@@ -1,6 +1,7 @@
 package main.entity;
 
 import main.engine.KeyHandler;
+import main.engine.Ui;
 import main.utils.Utils;
 
 import javax.imageio.ImageIO;
@@ -25,74 +26,78 @@ public class Player extends Entity {
         this.speed = 0;
     }
 
+
+
     public void update() {
-        try {
-            if((carImageTurnBack % 12) == 0 && speed > 0) {
-                super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Costas1.png")));
-            }else {
-                super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Costas2.png")));
+        if(Ui.getCarNameSelected() != null) {
+            try {
+                if((carImageTurnBack % 12) == 0 && speed > 0) {
+                    super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/" + Ui.getCarNameSelected() + "Costas1.png")));
+                }else {
+                    super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/" + Ui.getCarNameSelected() + "Costas2.png")));
 
+                }
+
+                carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            if (this.willCollideVertically) {
+                this.speed = 0;
+                this.y -= 5;
             }
 
-            carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        if (this.willCollideVertically) {
-            this.speed = 0;
-            this.y -= 5;
-        }
-
-        if (this.willCollideHorizontally) {
-            this.speed = this.speed / 2;
-            this.x -= 5;
-        }
-
-        if (keyHandler.upPressed) {
-            if (this.speed < Utils.MAX_SPEED) {
-                this.speed += (speed == 0) ? 1 : speed * 0.02;
+            if (this.willCollideHorizontally) {
+                this.speed = this.speed / 2;
+                this.x -= 5;
             }
-        } else {
-            if (this.speed > 20) {
-                this.speed -= speed * 1/100;
+
+            if (keyHandler.upPressed) {
+                if (this.speed < Utils.MAX_SPEED) {
+                    this.speed += (speed == 0) ? 1 : speed * 0.02;
+                }
             } else {
-                this.speed -= 5;
-            }
-        }
-
-        if (keyHandler.leftPressed) {
-            int newX = this.x - (int) Math.ceil(speed * (Math.sqrt(2) / 100));
-            this.x = Math.max(newX, 0);
-            try {
-                super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Direita.png")));
-
-                carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                if (this.speed > 20) {
+                    this.speed -= speed * 1/100;
+                } else {
+                    this.speed -= 5;
+                }
             }
 
-        }
+            if (keyHandler.leftPressed) {
+                int newX = this.x - (int) Math.ceil(speed * (Math.sqrt(2) / 100));
+                this.x = Math.max(newX, 0);
+                try {
+                    super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/" + Ui.getCarNameSelected() + "Esquerda.png")));
 
-        if (keyHandler.rightPressed) {
-            int newX = this.x + (int) Math.ceil(speed * (Math.sqrt(2) / 100));
-            this.x = Math.min(newX, (int) Utils.SCREEN_WIDTH - carW);
+                    carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
 
-            try {
-                super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Esquerda.png")));
-                carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
-        }
-        if (this.speed < 0) {
-            this.speed = 0;
-        }
 
-        if (this.x < Utils.SCREEN_WIDTH/2 - 384 - 90 || this.x > 384 + Utils.SCREEN_WIDTH/2 - carW + 90) {
-            this.speed  -= speed * 3/100;
+            if (keyHandler.rightPressed) {
+                int newX = this.x + (int) Math.ceil(speed * (Math.sqrt(2) / 100));
+                this.x = Math.min(newX, (int) Utils.SCREEN_WIDTH - carW);
+
+                try {
+                    super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/" + Ui.getCarNameSelected() + "Direita.png")));
+                    carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (this.speed < 0) {
+                this.speed = 0;
+            }
+
+            if (this.x < Utils.SCREEN_WIDTH/2 - 384 - 90 || this.x > 384 + Utils.SCREEN_WIDTH/2 - carW + 90) {
+                this.speed  -= speed * 3/100;
+            }
         }
     }
 

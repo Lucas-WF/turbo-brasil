@@ -16,11 +16,18 @@ public class Ui {
     private BufferedImage startButton, soloButton, multiplayerButton,exitButton,leftButton,rightButton,selectButton; // buttons
     private BufferedImage backgroundImage; // backgrounds
     private BufferedImage title1,title2,title3,title4;
-    private BufferedImage car1,car2,car3,car4,car5;
+    private BufferedImage car1,car2,car3,car4,car5, car6;
     private BufferedImage m1,m2,m3;
 
     private int currentCarIndex = 0; // Índice para o carro atual
     private BufferedImage[] cars;
+
+    static private String carNameSelected;
+    private String[] carsNames = new String[] {
+            "Roxo", "Rosa",
+            "Amarelo2", "Verde",
+            "Amarelo3", "Amarelo1"
+    };
 
     static private BufferedImage carSelected;
 
@@ -72,17 +79,18 @@ public class Ui {
             selectButton = ImageIO.read(new FileInputStream("res/buttons/selectButton.png"));
 
             //cars placeholder
-            car1 = ImageIO.read(new FileInputStream("res/gameCars/Amarelo1Costas1.png"));
-            car2 = ImageIO.read(new FileInputStream("res/cars/car2.png"));
-            car3 = ImageIO.read(new FileInputStream("res/cars/car3.png"));
-            car4 = ImageIO.read(new FileInputStream("res/cars/car4.png"));
-            car5 = ImageIO.read(new FileInputStream("res/cars/car5.png"));
+            car1 = ImageIO.read(new FileInputStream("res/gameCarsSelection/RoxoSelectMenu.png"));
+            car2 = ImageIO.read(new FileInputStream("res/gameCarsSelection/RosaSelectMenu.png"));
+            car3 = ImageIO.read(new FileInputStream("res/gameCarsSelection/Amarelo2SelectMenu.png"));
+            car4 = ImageIO.read(new FileInputStream("res/gameCarsSelection/VerdeSelectMenu.png"));
+            car5 = ImageIO.read(new FileInputStream("res/gameCarsSelection/Amarelo3SelectMenu.png"));
+            car6 = ImageIO.read(new FileInputStream("res/gameCarsSelection/Amarelo1SelectMenu.png"));
 
             //players name
             p1 = ImageIO.read(new FileInputStream("res/titles/p1.png"));
             p2 = ImageIO.read(new FileInputStream("res/titles/p2.png"));
 
-            cars = new BufferedImage[] {car1, car2, car3, car4, car5};
+            cars = new BufferedImage[] {car1, car2, car3, car4, car5, car6};
 
             players = new BufferedImage[] {p1, p2};
 
@@ -105,6 +113,10 @@ public class Ui {
         return carSelected;
     }
 
+    static public String getCarNameSelected() {
+        return carNameSelected;
+    }
+
     public void drawMenu(Graphics2D g2, GamePanel gp) {
         this.g2 = g2;
 
@@ -121,8 +133,8 @@ public class Ui {
         soloButtonX = screenSize.width/2 + startButton.getWidth()/6 + 6;
         soloButtonY = 280 + title2.getHeight();
 
-        multiplayerButtonX = screenSize.width/2 + multiplayerButton.getWidth()/6;
-        multiplayerButtonY = 280 + title2.getHeight() + soloButton.getHeight();
+        //multiplayerButtonX = screenSize.width/2 + multiplayerButton.getWidth()/6;
+        //multiplayerButtonY = 280 + title2.getHeight() + soloButton.getHeight();
 
         exitButtonX = screenSize.width/2 + exitButton.getWidth()/6;
         exitButtonY = 280 + title2.getHeight() + soloButton.getHeight() + multiplayerButton.getHeight();
@@ -130,7 +142,7 @@ public class Ui {
         g2.drawImage(backgroundGif.getImage(), 0, 0, gp.getWidth(), gp.getHeight(), null);
         g2.drawImage(title2, screenSize.width/2 + 10, 260, title2.getWidth(), title2.getHeight(), null);
         g2.drawImage(soloButton, soloButtonX,soloButtonY, soloButton.getWidth(), soloButton.getHeight(), null);
-        g2.drawImage(multiplayerButton,multiplayerButtonX,multiplayerButtonY, multiplayerButton.getWidth(), multiplayerButton.getHeight(), null);
+        //g2.drawImage(multiplayerButton,multiplayerButtonX,multiplayerButtonY, multiplayerButton.getWidth(), multiplayerButton.getHeight(), null);
         g2.drawImage(exitButton, exitButtonX, exitButtonY, exitButton.getWidth(), exitButton.getHeight(), null);
     }
 
@@ -225,12 +237,6 @@ public class Ui {
     public boolean isRightButtonClicked(int mouseX, int mouseY) {
         return isButtonClicked(mouseX, mouseY, rightButtonX, rightButtonY, rightButton.getWidth(), rightButton.getHeight());
     }
-    public boolean isSelectButtonClicked(int mouseX, int mouseY) {
-        carSelected = cars[currentCarIndex];
-        System.out.println(carSelected);
-        return isButtonClicked(mouseX, mouseY, selectButtonX, selectButtonY, selectButton.getWidth(), selectButton.getHeight());
-    }
-
     public void handleCarSelectionClick(int mouseX, int mouseY) {
         if (isLeftButtonClicked(mouseX, mouseY)) {
             // Decrementa o índice do carro, certificando-se de que não saia dos limites
@@ -243,6 +249,12 @@ public class Ui {
             currentCarIndex = (currentCarIndex + 1) % cars.length;
             System.out.println("Próximo carro selecionado: " + currentCarIndex);
         }
+    }
+
+    public boolean isSelectButtonClicked(int mouseX, int mouseY) {
+        carSelected = cars[currentCarIndex];
+        carNameSelected = carsNames[currentCarIndex];
+        return isButtonClicked(mouseX, mouseY, selectButtonX, selectButtonY, selectButton.getWidth(), selectButton.getHeight());
     }
     public int handleMapSelectionClick(int mouseX, int mouseY) {
         // Verifica se clicou no mapa 1
