@@ -175,7 +175,7 @@ public class GamePanel extends JPanel implements Runnable{
         display.getFrame().addKeyListener(keyHandler);
         display.getFrame().requestFocusInWindow();
         player = new Player(keyHandler);
-        enemies = new Enemy[]{new Enemy()};
+        enemies = new Enemy[]{new Enemy("Amarelo1"), new Enemy("Verde")};
         ui = new Ui(keyHandler);
         gameRace = new GameRace(width, height, player, enemies);
         gameRace.init();

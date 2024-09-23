@@ -1,5 +1,6 @@
 package main.entity;
 
+import main.engine.Ui;
 import main.utils.Utils;
 
 import javax.imageio.ImageIO;
@@ -12,12 +13,12 @@ import java.util.random.RandomGenerator;
 public class Enemy extends Entity {
     private static final int carW = 240;
 
-    public Enemy() throws IOException {
+    public Enemy(String car) throws IOException {
         this.x = 750;
         this.y = 0;
         this.pos = 0;
         this.speed = 0;
-        this.bufferedImage = ImageIO.read(new FileInputStream("res/gameCars/Amarelo1Costas1.png"));
+        this.bufferedImage = ImageIO.read(new FileInputStream("res/gameCars/" +  car + "Costas1.png"));
     }
 
     public void update() {
