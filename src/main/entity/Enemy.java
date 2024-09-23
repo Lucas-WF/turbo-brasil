@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Enemy extends Entity {
+    private static final int carW = 240;
+
     public Enemy() throws IOException {
         this.x = 750;
         this.y = 0;
@@ -43,8 +45,10 @@ public class Enemy extends Entity {
     }
 
     public void draw(Graphics2D g2) {
-        g2.drawImage(bufferedImage, x, 570, 240, 240, null);
+        int carH = 200;
+        g2.drawImage(bufferedImage, x, (int) Utils.SCREEN_HEIGHT - carH - 40, carW, carH, null);
     }
+
 
     public double getSpeed() {
         return speed;
