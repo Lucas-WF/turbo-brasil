@@ -1,12 +1,9 @@
 package main.road;
 
 import main.engine.GamePanel;
-import main.engine.KeyHandler;
+import main.entity.Player;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,28 +11,47 @@ public class Road {
     private List<Line> lines = new ArrayList<>();
     private final int roadWidth;
     private final int segmentLength;
-    private final int numSegments;
+    private int numSegments;
     private final double camD; //CamDepth
+    private String mapSeleted;
 
     Color grass, rumble, road, midline;
 
 
-    public Road(int roadWidth, int segmentLength, int numSegments, double camD) {
+    public Road(int roadWidth, int segmentLength, double camD) {
         this.roadWidth = roadWidth;
         this.segmentLength = segmentLength;
-        this.numSegments = numSegments;
         this.camD = camD;
-        generateRoad();
     }
 
     private void generateRoad() {
-        for (int i = 0; i < numSegments; i++) {
-            Line line = new Line();
-            line.setZ( i * segmentLength);
-            if (i > 200 && i < 700) {
-                line.setCurve(4);
-            }
-            lines.add(line);
+        String mapSelected = GamePanel.getMapSelected();
+        if (mapSelected == null) {
+            throw new IllegalStateException("The selected map cannot be null");
+        }
+        switch (mapSelected) {
+            case "Rio":
+                this.numSegments = 2000;
+                for (int i = 0; i < numSegments; i++) {
+                    Line line = new Line();
+                    line.setZ(i * segmentLength);
+                    if (i > 75 && i < 375 || i > 825 && i < 925 || i > 1075 && i < 1375 || i > 1825 && i < 1925) {
+                        line.setCurve(4);
+                    }
+                    if (i > 525 && i < 625 || i > 1525 && i < 1625) {
+                        line.setCurve(-4);
+                    }
+                    lines.add(line);
+                }
+                break;
+            case "Caatinga":
+                // Add "Caatinga" map logic here
+                break;
+            case "Amazonia":
+                // Add "Amazonia" map logic here
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown map selected: " + mapSelected);
         }
     }
 
@@ -43,7 +59,8 @@ public class Road {
         return lines;
     }
 
-    public void renderRoad(Graphics2D g, int width, int height, int camX, int camY, int pos, int playerX) {
+    public void renderRoad(Graphics2D g, int width, int height, int camX, int camY, int pos, int playerX, Player player) {
+        generateRoad();
         int startPos = pos / segmentLength;
         double x = 0, dx = 0;
         double maxY = height;
@@ -90,6 +107,11 @@ public class Road {
                 drawQuad(g, midline, (int) previousLine.getX(), (int) previousLine.getY(), (int) (previousLine.getW() * 0.8), (int) currentLine.getX(), (int) currentLine.getY(), (int) (currentLine.getW() * 0.8));
                 drawQuad(g, road, (int) previousLine.getX(), (int) previousLine.getY(), (int) (previousLine.getW() * 0.7), (int) currentLine.getX(), (int) currentLine.getY(), (int) (currentLine.getW() * 0.7));
             }
+        }
+        if (700 >= pos / segmentLength && pos / segmentLength >= 200){
+            player.setCurve(player.getSpeed() * 1/10000);
+        } else {
+            player.setCurve(0);
         }
     }
 
