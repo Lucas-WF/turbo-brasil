@@ -147,23 +147,31 @@ public class Road {
             String mapSelected = GamePanel.getMapSelected();
             switch (mapSelected) {
                 case "Rio":
-                    if (startPos > 75 && startPos < 375 || startPos > 825 && startPos < 925 || startPos > 1075 && startPos < 1375 || startPos > 1825 && startPos < 1925 || startPos > 525 && startPos < 625 || startPos > 1525 && startPos < 1625) {
+                    if (startPos > 75 && startPos < 375 || startPos > 825 && startPos < 925 || startPos > 1075 && startPos < 1375 || startPos > 1825 && startPos < 1925) {
                         player.setCurve(player.getSpeed() * 1 / 10000);
-                    } else {
+                    } else if(startPos > 525 && startPos < 625 || startPos > 1525 && startPos < 1625){
+                        player.setCurve( - (player.getSpeed() * 1 / 10000));
+                    }
+                    else {
                         player.setCurve(0);
                     }
                     break;
                 case "Caatinga":
-                    if (startPos > 100 && startPos < 200 || startPos > 400 && startPos < 500 || startPos > 1000  && startPos < 1375 || startPos > 1825 && startPos < 1925 || startPos > 200 && startPos < 300 || startPos > 500 && startPos < 600) {
+                    if (startPos > 100 && startPos < 200 || startPos > 400 && startPos < 500 || startPos > 1000  && startPos < 1375 || startPos > 1825 && startPos < 1925) {
                         player.setCurve(player.getSpeed() * 1 / 10000);
-                    } else {
+                    } else if (startPos > 200 && startPos < 300 || startPos > 500 && startPos < 600){
+                        player.setCurve( - (player.getSpeed() * 1 / 10000));
+                    }else {
                         player.setCurve(0);
                     }
                     break;
                 case "Amazonia":
-                    if (startPos > 200 && startPos < 300 || startPos > 400 && startPos < 500 || startPos > 1400 && startPos < 1600 || startPos > 1825 && startPos < 1950 || startPos > 300 && startPos < 400 || startPos > 900 && startPos < 1200 ) {
+                    if (startPos > 200 && startPos < 300 || startPos > 400 && startPos < 500 || startPos > 1400 && startPos < 1600 || startPos > 1825 && startPos < 1950) {
                         player.setCurve(player.getSpeed() * 1 / 10000);
-                    } else {
+                    } else if(startPos > 300 && startPos < 400 || startPos > 900 && startPos < 1200 ){
+                        player.setCurve( - (player.getSpeed() * 1 / 10000));
+                    }
+                    else {
                         player.setCurve(0);
                     }
                     break;
