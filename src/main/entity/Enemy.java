@@ -14,7 +14,7 @@ public class Enemy extends Entity {
         this.y = 0;
         this.pos = 0;
         this.speed = 0;
-        this.bufferedImage = ImageIO.read(new FileInputStream("res/fusca/monke.png"));
+        this.bufferedImage = ImageIO.read(new FileInputStream("res/gameCars/Amarelo1Costas1.png"));
     }
 
     public void start() {
@@ -26,21 +26,24 @@ public class Enemy extends Entity {
             if (this.willCollideVertically) {
                 this.y -= Utils.AVOID_STEP;
                 this.speed = 0;
+                this.willCollideVertically = false;
             }
 
             if (this.willCollideHorizontally) {
                 this.x -= Utils.AVOID_STEP;
                 this.speed /= 2;
+                this.willCollideHorizontally = false;
                 return;
             }
 
             this.speed += this.speed == Utils.MAX_SPEED ? 0 : 5;
             this.pos += (int) speed;
+
         }
     }
 
     public void draw(Graphics2D g2) {
-        //g2.drawImage(bufferedImage, x, 570, 240, 240, null);
+        g2.drawImage(bufferedImage, x, 570, 240, 240, null);
     }
 
     public double getSpeed() {

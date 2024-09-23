@@ -67,6 +67,7 @@
                 }
 
                 player.update();
+                player.collision(this.enemies);
                 pos += (int) player.getSpeed();
 
                 if (pos >= road.getLines().size() * 768) {
@@ -80,8 +81,15 @@
             }
         }
 
-
         public void render(Graphics2D graphics) {
+            showCounter(graphics, String.valueOf(countdown));
+
+            for (Enemy enemy : enemies) {
+                threadPool.submit(() -> {
+                    enemy.draw(graphics);
+                });
+            }
+
             if (gameFinished) {
                 showFinishScreen(graphics);
             } else {
@@ -103,6 +111,14 @@
                     graphics.drawString(countdownText, width / 2 - 20,height / 4);
                 }
             }
+        }
+
+        private void showCounter(Graphics2D g, String counter) {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, width, height);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 48));
+            g.drawString(counter, width / 2 - 150, height / 2);
         }
 
         private void showFinishScreen(Graphics2D g) {

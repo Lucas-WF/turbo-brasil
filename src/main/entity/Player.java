@@ -8,7 +8,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Player extends Entity {
     final private KeyHandler keyHandler;
@@ -42,11 +41,13 @@ public class Player extends Entity {
             if (this.willCollideVertically) {
                 this.speed = 0;
                 this.y -= 5;
+                this.willCollideVertically = false;
             }
 
             if (this.willCollideHorizontally) {
                 this.speed = this.speed / 2;
                 this.x -= 5;
+                this.willCollideHorizontally = false;
             }
 
             if (keyHandler.upPressed) {
@@ -106,7 +107,7 @@ public class Player extends Entity {
         return speed;
     }
 
-    public void collision(ArrayList<Entity> entities) {
+    public void collision(Enemy[] entities) {
         float verticalDistance;
         float horizontalDistance;
 
