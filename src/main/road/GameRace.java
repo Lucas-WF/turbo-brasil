@@ -31,7 +31,7 @@
             this.player = player;
             this.enemies = enemies;
             this.threadPool = Executors.newFixedThreadPool(enemies.length);
-            road = new Road(768, 768, 1600, 0.84);
+            road = new Road(768, 768, 0.84);
         }
 
         public ArrayList<Entity> getEntities() {
@@ -88,7 +88,7 @@
                 graphics.clearRect(0, 0, width, height);
                 int camY = 1500;
                 int playerX = 0;
-                road.renderRoad(graphics, width, height, playerX, camY, pos, playerX);
+                road.renderRoad(graphics, width, height, playerX, camY, pos, playerX, player);
                 player.draw(graphics);
 
                 graphics.setColor(Color.WHITE);

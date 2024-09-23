@@ -14,7 +14,7 @@ public class Enemy extends Entity {
         this.y = 0;
         this.pos = 0;
         this.speed = 0;
-        this.bufferedImage = ImageIO.read(new FileInputStream("res/fusca/monke.png"));
+        this.bufferedImage = ImageIO.read(new FileInputStream("res/cars/car1.png"));
     }
 
     public void start() {

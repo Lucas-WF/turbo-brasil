@@ -15,6 +15,7 @@ public class Player extends Entity {
 
     private int carImageTurnBack= 0;
     private static final int carW = 240;
+    private double curve = 0;
 
     public Player(KeyHandler keyHandler) {
         this.keyHandler = keyHandler;
@@ -95,6 +96,11 @@ public class Player extends Entity {
                 this.speed  -= speed * 3/100;
             }
         }
+        if (this.curve != 0) {
+            int curveEffect = (int) (curve * speed * 0.1);
+            this.x -= curveEffect;
+            this.x = Math.max(Math.min(this.x, (int) Utils.SCREEN_WIDTH - carW), 0);
+        }
     }
 
     public void draw(Graphics2D g2) {
@@ -126,5 +132,9 @@ public class Player extends Entity {
                 }
             }
         }
+    }
+
+    public void setCurve(double curve){
+        this.curve = curve;
     }
 }
