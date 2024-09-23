@@ -35,12 +35,6 @@ public class Road {
             if (i > 200 && i < 700) {
                 line.setCurve(4);
             }
-            if (i > 1000) {
-                line.setY(Math.sin(Math.toRadians(i / 30)) * 1500);
-                if (line.getY() < 0) {
-                    line.setY(0);
-                }
-            }
             lines.add(line);
         }
     }
@@ -64,7 +58,6 @@ public class Road {
 
             if (currentLine.getY() > 0 && currentLine.getY() < maxY) {
                 maxY = currentLine.getY();
-                //System.out.println(GamePanel.getMapSelected());
                 switch(GamePanel.getMapSelected()) {
                     case "Rio":
                         grass = ((n / 2) % 2) == 0 ? new Color(60, 120, 220) : new Color(90, 139, 227);

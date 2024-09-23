@@ -14,6 +14,8 @@ public class Player extends Entity {
     final private KeyHandler keyHandler;
 
     private int carImageTurnBack= 0,carImageTurnRight = 0, carImageTurnLeft = 0;
+    private static int carW = 240;
+    private static int carH = 200;
 
     public Player(KeyHandler keyHandler) throws IOException {
         this.keyHandler = keyHandler;
@@ -60,8 +62,8 @@ public class Player extends Entity {
         }
 
         if (keyHandler.leftPressed) {
-            this.x -= (int) Math.ceil(speed * (Math.sqrt(2) / 100));
-
+            int newX = this.x - (int) Math.ceil(speed * (Math.sqrt(2) / 100));
+            this.x = Math.max(newX, 0);
             try {
                 super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Direita.png")));
 
@@ -74,8 +76,8 @@ public class Player extends Entity {
         }
 
         if (keyHandler.rightPressed) {
-            this.x += (int) Math.ceil(speed * (Math.sqrt(2) / 100));
-
+            int newX = this.x + (int) Math.ceil(speed * (Math.sqrt(2) / 100));
+            this.x = Math.min(newX, (int) Utils.SCREEN_WIDTH - carW);
 
             try {
                 super.setBufferedImage(ImageIO.read(new FileInputStream("res/gameCars/Amarelo3Esquerda.png")));
@@ -88,10 +90,14 @@ public class Player extends Entity {
         if (this.speed < 0) {
             this.speed = 0;
         }
+
+        if (this.x < Utils.SCREEN_WIDTH/2 - 384 - 90 || this.x > 384 + Utils.SCREEN_WIDTH/2 - carW + 90) {
+            this.speed  -= speed * 3/100;
+        }
     }
 
     public void draw(Graphics2D g2) {
-        g2.drawImage(bufferedImage, x, 570, 240, 240, null);
+        g2.drawImage(bufferedImage, x, (int) Utils.SCREEN_HEIGHT - carH - 40, carW, carH, null);
     }
 
     public double getSpeed() {
