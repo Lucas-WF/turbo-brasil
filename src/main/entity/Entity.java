@@ -10,6 +10,7 @@ import java.io.IOException;
 public abstract class Entity {
     public int x, y;
     public int pos;
+    public int leaderboardPos;
     public double screenX = Utils.SCREEN_WIDTH / 2;
     public double screenY= Utils.SCREEN_HEIGHT;
     public double speed;
@@ -39,10 +40,4 @@ public abstract class Entity {
 
         return thisBottom >= entityTop && thisTop <= entityBottom;
     }
-
-    boolean isAllignedTo(String object) {
-        return true;
-    } // Define a class to walls and other objects
-
-
 }

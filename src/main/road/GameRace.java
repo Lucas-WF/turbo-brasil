@@ -17,6 +17,15 @@
         private final ExecutorService threadPool;
         private final Road road;
 
+        private final Thread leaderboardThread = new Thread(() -> {
+            Entity[] carsArray = getEntities().toArray(new Entity[0]);
+
+            Entity[] sortedCars = sortLeaderboard(carsArray, carsArray.length);
+            for (int i = 0; i < sortedCars.length; ++i) {
+                sortedCars[i].leaderboardPos = i + 1;
+            }
+        });
+
         private int pos = 0;
         private final int totalLaps = 3;
         private int completedLaps = 1;
@@ -34,7 +43,7 @@
             road = new Road(768, 768, 0.84);
         }
 
-        public ArrayList<Entity> getEntities() {
+        protected ArrayList<Entity> getEntities() {
             ArrayList<Entity> entities = new ArrayList<>();
             entities.add(this.player);
             Collections.addAll(entities, this.enemies);
@@ -43,6 +52,7 @@
 
         public void init() {
             lastTime = System.nanoTime();
+            leaderboardThread.start();
         }
 
         public void update() {
@@ -81,7 +91,7 @@
             }
         }
 
-        public void render(Graphics2D graphics) {
+        public void render(Graphics2D graphics) throws InterruptedException {
             showCounter(graphics, String.valueOf(countdown));
 
             for (Enemy enemy : enemies) {
@@ -91,6 +101,8 @@
             }
 
             if (gameFinished) {
+                leaderboardThread.join();
+                threadPool.shutdown();
                 showFinishScreen(graphics);
             } else {
                 graphics.clearRect(0, 0, width, height);
@@ -103,6 +115,11 @@
                 graphics.setFont(new Font("Arial", Font.BOLD, 24));
                 String lapText = completedLaps + " / " + totalLaps;
                 graphics.drawString(lapText, width - 100, 30);
+
+                graphics.setColor(Color.WHITE);
+                graphics.setFont(new Font("Arial", Font.BOLD, 24));
+                String position = player.leaderboardPos + "st";
+                graphics.drawString(position, width - 100, 50);
 
                 if (!gameStarted) {
                     graphics.setColor(Color.BLACK);
@@ -128,4 +145,48 @@
             g.setFont(new Font("Arial", Font.BOLD, 48));
             g.drawString("Game Finished!", width / 2 - 150, height / 2);
         }
+
+        private Entity[] sortLeaderboard(Entity[] cars, int n) {
+            if (n < 2) {
+                return cars;
+            }
+
+            int mid = n / 2;
+            Entity[] l = new Entity[mid];
+            Entity[] r = new Entity[n - mid];
+
+            System.arraycopy(cars, 0, l, 0, mid);
+            System.arraycopy(cars, mid, r, 0, n - mid);
+
+            l = sortLeaderboard(l, mid);
+            r = sortLeaderboard(r, n - mid);
+
+            return merge(l, r);
+        }
+
+        private Entity[] merge(Entity[] l, Entity[] r) {
+            int left = l.length;
+            int right = r.length;
+            Entity[] merged = new Entity[left + right];
+
+            int i = 0, j = 0, k = 0;
+
+            while (i < left && j < right) {
+                if (l[i].pos <= r[j].pos) {
+                    merged[k++] = l[i++];
+                } else {
+                    merged[k++] = r[j++];
+                }
+            }
+
+            while (i < left) {
+                merged[k++] = l[i++];
+            }
+            while (j < right) {
+                merged[k++] = r[j++];
+            }
+
+            return merged;
+        }
+
     }

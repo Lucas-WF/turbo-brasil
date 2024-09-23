@@ -225,6 +225,8 @@ public class GamePanel extends JPanel implements Runnable{
                 default:
                     break;
             }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         } finally {
             graphics.dispose();
         }
