@@ -6,7 +6,6 @@ import main.utils.Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,19 +13,16 @@ import java.util.ArrayList;
 public class Player extends Entity {
     final private KeyHandler keyHandler;
 
-    private int carImageTurnBack= 0,carImageTurnRight = 0, carImageTurnLeft = 0;
-    private static int carW = 240;
-    private static int carH = 200;
+    private int carImageTurnBack= 0;
+    private static final int carW = 240;
 
-    public Player(KeyHandler keyHandler) throws IOException {
+    public Player(KeyHandler keyHandler) {
         this.keyHandler = keyHandler;
         this.x = 650;
         this.y = 0;
         this.pos = 0;
         this.speed = 0;
     }
-
-
 
     public void update() {
         if(Ui.getCarNameSelected() != null) {
@@ -38,7 +34,7 @@ public class Player extends Entity {
 
                 }
 
-                carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1; // Para não estourar o int
+                carImageTurnBack = (carImageTurnBack > 1_000_000) ? 0 : carImageTurnBack + 1;
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -102,6 +98,7 @@ public class Player extends Entity {
     }
 
     public void draw(Graphics2D g2) {
+        int carH = 200;
         g2.drawImage(bufferedImage, x, (int) Utils.SCREEN_HEIGHT - carH - 40, carW, carH, null);
     }
 

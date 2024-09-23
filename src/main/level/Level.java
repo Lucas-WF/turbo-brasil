@@ -1,54 +1,47 @@
 package main.level;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import main.entity.Entity;
+import main.road.GameRace;
 
 public class Level {
-//    final private Road road;
-//
-//    public Level(Road road) {
-//        this.road = road;
-//    }
-//
-//    public List<Point> generateMiniMap() {
-//        List<Segment> segments = road.getSegments();
-//        OptionalInt index =  IntStream.range(0, segments.size()).filter(i -> segments.get(i).getType() == SegmentType.RIGHT).findFirst();
-//
-//        if(index.isEmpty()) {
-//            return segments.stream().flatMap(segment -> segment.generatedPoints.stream()).collect(Collectors.toList());
-//        }
-//
-//        List<Point> pointList = new ArrayList<>(segments.subList(0, index.getAsInt()).stream().flatMap(segment ->
-//                segment.generatedPoints.stream()).toList());
-//        for (Segment segment : segments.subList(index.getAsInt(), segments.size() - 1)) {
-//            if (segment.generatedPoints.isEmpty()) {
-//                continue;
-//            }
-//
-//            int xCenter = segment.generatedPoints.get(0).getX();
-//            int yCenter = segment.generatedPoints.get(0).getY();
-//            double theta = -Math.PI / 2;
-//
-//            double cosTheta = Math.cos(theta);
-//            double sinTheta = Math.sin(theta);
-//            double[][] R = {
-//                    {cosTheta, -sinTheta},
-//                    {sinTheta, cosTheta}
-//            };
-//
-//            for (Point point: segment.generatedPoints) {
-//                int dx = point.getX() - xCenter;
-//                int dy = point.getY() - yCenter;
-//                int rotatedX = (int) (R[0][0] * dx + R[0][1] * dy + xCenter);
-//                int rotatedY = (int) (R[1][0] * dx + R[1][1] * dy + yCenter);
-//                pointList.add(new Point(rotatedX, rotatedY));
-//            }
-//        }
-//
-//        return pointList;
-//    }
+    final private GameRace gameRace;
+
+    public Level(GameRace gameRace) {
+        this.gameRace = gameRace;
+    }
+
+    public void sortLeaderboard(Entity[] cars, int n) {
+        if (n < 2) {
+            return;
+        }
+
+        int mid = n / 2;
+        Entity[] l = new Entity[mid];
+        Entity[] r = new Entity[n - mid];
+
+        System.arraycopy(cars, 0, l, 0, mid);
+        System.arraycopy(cars, mid, r, 0, n - mid);
+
+        sortLeaderboard(l, mid);
+        sortLeaderboard(r, n - mid);
+
+        merge(cars, l, r, mid, n - mid);
+    }
+
+    private void merge(Entity[] cars, Entity[] l, Entity[] r, int left, int right) {
+        int i = 0, j = 0, k = 0;
+        while (i < left && j < right) {
+            if (l[i].pos <= r[j].pos) {
+                cars[k++] = l[i++];
+            } else {
+                cars[k++] = r[j++];
+            }
+        }
+        while (i < left) {
+            cars[k++] = l[i++];
+        }
+        while (j < right) {
+            cars[k++] = r[j++];
+        }
+    }
 }

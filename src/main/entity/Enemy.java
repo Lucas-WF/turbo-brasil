@@ -22,19 +22,21 @@ public class Enemy extends Entity {
     }
 
     public void update() {
-        if (this.willCollideVertically) {
-            this.y -= Utils.AVOID_STEP;
-            this.speed = 0;
-        }
+        synchronized (this) {
+            if (this.willCollideVertically) {
+                this.y -= Utils.AVOID_STEP;
+                this.speed = 0;
+            }
 
-        if (this.willCollideHorizontally) {
-            this.x -= Utils.AVOID_STEP;
-            this.speed /= 2;
-            return;
-        }
+            if (this.willCollideHorizontally) {
+                this.x -= Utils.AVOID_STEP;
+                this.speed /= 2;
+                return;
+            }
 
-        this.speed += this.speed == Utils.MAX_SPEED ? 0 : 5;
-        this.pos += speed;
+            this.speed += this.speed == Utils.MAX_SPEED ? 0 : 5;
+            this.pos += (int) speed;
+        }
     }
 
     public void draw(Graphics2D g2) {
@@ -62,36 +64,38 @@ public class Enemy extends Entity {
     }
 
     public void tryToAvoid(ArrayList<Entity> entities) {
-        float verticalDistance;
-        float horizontalDistance;
+        synchronized (this) {
+            float verticalDistance;
+            float horizontalDistance;
 
-        for (Entity entity : entities) {
-            verticalDistance = entity.y + ((float) entity.bufferedImage.getHeight() / 2) -
-                    this.y +  ((float) this.bufferedImage.getHeight() / 2);
-            horizontalDistance = entity.x + ((float) entity.bufferedImage.getWidth() / 2) -
-                    this.x +  ((float) this.bufferedImage.getWidth() / 2);
+            for (Entity entity : entities) {
+                verticalDistance = entity.y + ((float) entity.bufferedImage.getHeight() / 2) -
+                        this.y + ((float) this.bufferedImage.getHeight() / 2);
+                horizontalDistance = entity.x + ((float) entity.bufferedImage.getWidth() / 2) -
+                        this.x + ((float) this.bufferedImage.getWidth() / 2);
 
-            if (isHorizontallyAlignedTo(entity) && isVerticallyAlignedTo(entity)) {
-                if (verticalDistance <= 0) {
-                    this.willCollideVertically = true;
+                if (isHorizontallyAlignedTo(entity) && isVerticallyAlignedTo(entity)) {
+                    if (verticalDistance <= 0) {
+                        this.willCollideVertically = true;
+                    }
+
+                    if (horizontalDistance <= 0) {
+                        this.willCollideHorizontally = true;
+                    }
+
+                    continue;
                 }
 
-                if (horizontalDistance <= 0) {
-                    this.willCollideHorizontally = true;
+                if (isHorizontallyAlignedTo(entity)) {
+                    if (Math.abs(verticalDistance) <= Utils.AVOID_DISTANCE) {
+                        moveVerticallyToAvoid(verticalDistance);
+                    }
                 }
 
-                continue;
-            }
-
-            if (isHorizontallyAlignedTo(entity)) {
-                if (Math.abs(verticalDistance) <= Utils.AVOID_DISTANCE) {
-                    moveVerticallyToAvoid(verticalDistance);
-                }
-            }
-
-            if (isVerticallyAlignedTo(entity)) {
-                if (Math.abs(horizontalDistance) <= Utils.AVOID_DISTANCE) {
-                    moveHorizontallyToAvoid(horizontalDistance);
+                if (isVerticallyAlignedTo(entity)) {
+                    if (Math.abs(horizontalDistance) <= Utils.AVOID_DISTANCE) {
+                        moveHorizontallyToAvoid(horizontalDistance);
+                    }
                 }
             }
         }

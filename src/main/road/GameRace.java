@@ -1,39 +1,47 @@
     package main.road;
 
+    import main.entity.Enemy;
+    import main.entity.Entity;
     import main.entity.Player;
-    import main.engine.KeyHandler;
 
-    import javax.imageio.ImageIO;
-    import javax.swing.*;
     import java.awt.*;
-    import java.io.FileInputStream;
-    import java.io.IOException;
+    import java.util.ArrayList;
+    import java.util.Collections;
+    import java.util.concurrent.ExecutorService;
+    import java.util.concurrent.Executors;
 
     public class GameRace {
-        private static final int FPS = 60;
         private final int width, height;
-        private KeyHandler keyHandler;
-        private Player player;
-        private Road road;
+        private final Player player;
+        private final Enemy[] enemies;
+        private final ExecutorService threadPool;
+        private final Road road;
 
-        private int playerX = 0;
         private int pos = 0;
-        private int totalLaps = 3;
+        private final int totalLaps = 3;
         private int completedLaps = 1;
         private boolean gameFinished = false;
         private boolean gameStarted = false;
         private int countdown = 4;
         private long lastTime;
 
-        public GameRace(int width, int height, String title, Player player) {
+        public GameRace(int width, int height, Player player, Enemy[] enemies) {
             this.width = width;
             this.height = height;
             this.player = player;
+            this.enemies = enemies;
+            this.threadPool = Executors.newFixedThreadPool(enemies.length);
             road = new Road(768, 768, 1600, 0.84);
         }
 
-        public void init() throws IOException {
-            keyHandler = new KeyHandler();
+        public ArrayList<Entity> getEntities() {
+            ArrayList<Entity> entities = new ArrayList<>();
+            entities.add(this.player);
+            Collections.addAll(entities, this.enemies);
+            return entities;
+        }
+
+        public void init() {
             lastTime = System.nanoTime();
         }
 
@@ -51,8 +59,15 @@
                     gameStarted = true;
                 }
             } else {
+                for (Enemy enemy : enemies) {
+                    threadPool.submit(() -> {
+                        enemy.update();
+                        enemy.tryToAvoid(getEntities());
+                    });
+                }
+
                 player.update();
-                pos += player.getSpeed();
+                pos += (int) player.getSpeed();
 
                 if (pos >= road.getLines().size() * 768) {
                     pos = 0;
@@ -70,9 +85,9 @@
             if (gameFinished) {
                 showFinishScreen(graphics);
             } else {
-
                 graphics.clearRect(0, 0, width, height);
                 int camY = 1500;
+                int playerX = 0;
                 road.renderRoad(graphics, width, height, playerX, camY, pos, playerX);
                 player.draw(graphics);
 
@@ -87,8 +102,6 @@
                     String countdownText = String.valueOf(countdown);
                     graphics.drawString(countdownText, width / 2 - 20,height / 4);
                 }
-
-
             }
         }
 
